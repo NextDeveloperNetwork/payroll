@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,10 +8,12 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
   <script>
-    (function() {
+    (function () {
       try {
         if (localStorage.getItem('pulsehr_theme') === 'light') {
           document.documentElement.classList.add('theme-light');
@@ -18,10 +21,11 @@
         if (localStorage.getItem('pulsehr_sidebar_collapsed') === 'true') {
           document.documentElement.classList.add('sidebar-collapsed');
         }
-      } catch (e) {}
+      } catch (e) { }
     })();
   </script>
 </head>
+
 <body class="compact-ui">
   <div class="app-shell">
     <!-- Sidebar Navigation -->
@@ -29,7 +33,8 @@
       <div class="brand">
         <div class="brand-content">
           <div class="brand-logo" title="PulseHR Workforce Management">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" style="width:20px;height:20px">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
             </svg>
           </div>
@@ -38,8 +43,10 @@
             <p class="brand-subtitle">Workforce &amp; Payroll</p>
           </div>
         </div>
-        <button type="button" class="btn-sidebar-toggle" id="btn-sidebar-toggle" title="Collapse sidebar (Ctrl+B)" aria-label="Toggle sidebar">
-          <svg class="toggle-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button type="button" class="btn-sidebar-toggle" id="btn-sidebar-toggle" title="Collapse sidebar (Ctrl+B)"
+          aria-label="Toggle sidebar">
+          <svg class="toggle-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
             <line x1="9" x2="9" y1="3" y2="21"></line>
             <path class="toggle-chevron" d="m15 9-3 3 3 3"></path>
@@ -50,7 +57,8 @@
       <nav class="side-nav">
         <button class="nav-item active" data-tab="dashboard" title="Overview Dashboard" data-i18n-title="nav_overview">
           <span class="nav-icon">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <rect width="7" height="9" x="3" y="3" rx="1"></rect>
               <rect width="7" height="5" x="14" y="3" rx="1"></rect>
               <rect width="7" height="9" x="14" y="12" rx="1"></rect>
@@ -61,7 +69,8 @@
         </button>
         <button class="nav-item" data-tab="timetable" title="Workhours Table" data-i18n-title="nav_timetable">
           <span class="nav-icon">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <rect width="18" height="18" x="3" y="4" rx="2"></rect>
               <line x1="16" x2="16" y1="2" y2="6"></line>
               <line x1="8" x2="8" y1="2" y2="6"></line>
@@ -78,7 +87,8 @@
         </button>
         <button class="nav-item" data-tab="attendance" title="Time Logs" data-i18n-title="nav_attendance">
           <span class="nav-icon">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
@@ -87,7 +97,8 @@
         </button>
         <button class="nav-item" data-tab="payroll" title="Salary &amp; Payroll" data-i18n-title="nav_payroll">
           <span class="nav-icon">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <rect width="20" height="14" x="2" y="5" rx="2"></rect>
               <line x1="2" x2="22" y1="10" y2="10"></line>
               <line x1="6" x2="10" y1="15" y2="15"></line>
@@ -98,7 +109,8 @@
         </button>
         <button class="nav-item" data-tab="employees" title="Employees Directory" data-i18n-title="nav_employees">
           <span class="nav-icon">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
               <circle cx="9" cy="7" r="4"></circle>
               <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -107,9 +119,11 @@
           </span>
           <span class="nav-label" data-i18n="nav_employees">Employees</span>
         </button>
-        <button class="nav-item" data-tab="salary-history" title="Base Salary Records" data-i18n-title="nav_salary_history">
+        <button class="nav-item" data-tab="salary-history" title="Base Salary Records"
+          data-i18n-title="nav_salary_history">
           <span class="nav-icon">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
               <polyline points="16 7 22 7 22 13"></polyline>
             </svg>
@@ -118,16 +132,21 @@
         </button>
         <button class="nav-item admin-only" data-tab="settings" title="Settings" data-i18n-title="nav_settings">
           <span class="nav-icon">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z">
+              </path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </span>
           <span class="nav-label" data-i18n="nav_settings">Settings</span>
         </button>
-        <button class="nav-item admin-only" data-tab="users" title="User Approvals &amp; Access" data-i18n-title="nav_users">
+        <button class="nav-item admin-only" data-tab="users" title="User Approvals &amp; Access"
+          data-i18n-title="nav_users">
           <span class="nav-icon">
-            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
               <path d="m9 12 2 2 4-4"></path>
             </svg>
@@ -148,7 +167,8 @@
           </div>
         </div>
         <button type="button" class="btn-logout" id="btn-logout" title="Log Out ⏻" aria-label="Log out">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" style="width:16px;height:16px">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -165,8 +185,10 @@
     <main class="main-area">
       <header class="topbar">
         <div style="display:flex;align-items:center;gap:0.75rem">
-          <button type="button" class="btn btn-ghost btn-xs btn-topbar-collapse" id="btn-topbar-sidebar-toggle" title="Toggle Sidebar (Ctrl+B)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px">
+          <button type="button" class="btn btn-ghost btn-xs btn-topbar-collapse" id="btn-topbar-sidebar-toggle"
+            title="Toggle Sidebar (Ctrl+B)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" style="width:17px;height:17px">
               <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
               <line x1="9" x2="9" y1="3" y2="21"></line>
               <path d="m14 9-3 3 3 3"></path>
@@ -178,11 +200,15 @@
           </div>
         </div>
         <div class="topbar-actions">
-          <span class="unit-pill" id="topbar-unit-pill" title="Click to change in Settings" data-jump="settings">⏱ Unit: Hours</span>
+          <span class="unit-pill" id="topbar-unit-pill" title="Click to change in Settings" data-jump="settings">⏱ Unit:
+            Hours</span>
           <!-- Language Selector -->
           <div class="lang-selector">
-            <button type="button" class="btn btn-secondary btn-sm" id="btn-lang-toggle" title="Translate / Ndrysho Gjuhën / Cambia Lingua" style="display:inline-flex;align-items:center;gap:0.35rem">
-              <span id="lang-flag">🇬🇧</span> <span id="lang-label">EN</span> <span style="font-size:0.58rem;opacity:0.7">▼</span>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-lang-toggle"
+              title="Translate / Ndrysho Gjuhën / Cambia Lingua"
+              style="display:inline-flex;align-items:center;gap:0.35rem">
+              <span id="lang-flag">🇬🇧</span> <span id="lang-label">EN</span> <span
+                style="font-size:0.58rem;opacity:0.7">▼</span>
             </button>
             <div class="lang-dropdown hidden" id="lang-dropdown">
               <button type="button" class="lang-opt" data-lang="en">
@@ -196,11 +222,14 @@
               </button>
             </div>
           </div>
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-theme-toggle" title="Toggle Clear / Dark Theme">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-theme-toggle"
+            title="Toggle Clear / Dark Theme">
             <span id="theme-toggle-icon">☀️</span> <span id="theme-toggle-label">Clear</span>
           </button>
-          <button class="btn btn-secondary btn-sm admin-only" id="btn-quick-attendance" data-i18n="btn_log_time">+ Log Time</button>
-          <button class="btn btn-primary btn-sm admin-only" id="btn-quick-employee" data-i18n="btn_employee">+ Employee</button>
+          <button class="btn btn-secondary btn-sm admin-only" id="btn-quick-attendance" data-i18n="btn_log_time">+ Log
+            Time</button>
+          <button class="btn btn-primary btn-sm admin-only" id="btn-quick-employee" data-i18n="btn_employee">+
+            Employee</button>
         </div>
       </header>
 
@@ -233,7 +262,8 @@
           </div>
 
           <div class="toolbar-group">
-            <button class="btn btn-secondary btn-xs admin-only" id="btn-toggle-select" title="Click or Shift+Click cells to select multiple">☑ Select</button>
+            <button class="btn btn-secondary btn-xs admin-only" id="btn-toggle-select"
+              title="Click or Shift+Click cells to select multiple">☑ Select</button>
             <button class="btn btn-secondary btn-xs admin-only" id="btn-autofill-period">⚡ Auto-Fill Mon–Sat</button>
             <button class="btn btn-secondary btn-xs" id="btn-export-timetable-excel">📊 Export Excel</button>
             <button class="btn btn-secondary btn-xs" id="btn-export-timetable-pdf">📄 Export PDF</button>
@@ -245,7 +275,8 @@
         <div id="selection-action-bar" class="selection-bar card hidden">
           <div class="toolbar-group">
             <strong id="selection-count">0 selected</strong>
-            <input type="text" inputmode="decimal" id="batch-value-input" class="input-control input-sm" style="width:90px" placeholder="Hours/Min" />
+            <input type="text" inputmode="decimal" id="batch-value-input" class="input-control input-sm"
+              style="width:90px" placeholder="Hours/Min" />
             <button class="btn btn-primary btn-xs" id="btn-batch-apply-val">Apply Value</button>
           </div>
           <div class="toolbar-group">
@@ -268,7 +299,8 @@
           <span class="legend-item"><span class="shift-dot shift-Sick"></span> Sick</span>
           <span class="legend-item"><span class="shift-dot shift-Absence"></span> Absence</span>
           <span class="legend-item"><span class="shift-dot shift-Off"></span> Off</span>
-          <span class="legend-hint">Click cell to type <strong id="legend-unit-label">Hours</strong> • Right-click for Leave / Absence / Holiday / Sick</span>
+          <span class="legend-hint">Click cell to type <strong id="legend-unit-label">Hours</strong> • Right-click for
+            Leave / Absence / Holiday / Sick</span>
         </div>
 
         <div class="card table-wrap matrix-scroll" id="timetable-matrix-container"></div>
@@ -278,7 +310,8 @@
       <section id="tab-attendance" class="tab-panel">
         <div class="toolbar card">
           <div class="toolbar-group">
-            <input type="text" id="timelog-search" class="input-control input-sm" style="min-width:190px" placeholder="Search emp #, name, surname..." />
+            <input type="text" id="timelog-search" class="input-control input-sm" style="min-width:190px"
+              placeholder="Search emp #, name, surname..." />
             <select id="timelog-type-filter" class="input-select input-sm">
               <option value="">All (Leave / Absence / Sick)</option>
               <option value="Leave">Leave</option>
@@ -345,9 +378,12 @@
             </select>
           </div>
           <div class="toolbar-group">
-            <button class="btn btn-secondary btn-xs" id="btn-export-payroll-bank" data-i18n="btn_export_bank">🏦 Export for Bank</button>
-            <button class="btn btn-secondary btn-xs" id="btn-export-payroll-excel" data-i18n="btn_export_excel">📊 Export Excel</button>
-            <button class="btn btn-secondary btn-xs admin-only" id="btn-generate-period-payroll" data-i18n="btn_recalc_payroll">⚡ Run Monthly Payroll</button>
+            <button class="btn btn-secondary btn-xs" id="btn-export-payroll-bank" data-i18n="btn_export_bank">🏦 Export
+              for Bank</button>
+            <button class="btn btn-secondary btn-xs" id="btn-export-payroll-excel" data-i18n="btn_export_excel">📊
+              Export Excel</button>
+            <button class="btn btn-secondary btn-xs admin-only" id="btn-generate-period-payroll"
+              data-i18n="btn_recalc_payroll">⚡ Run Monthly Payroll</button>
             <button class="btn btn-primary btn-xs admin-only" id="btn-open-payroll-modal">+ Custom Entry</button>
           </div>
         </div>
@@ -381,7 +417,8 @@
       <section id="tab-employees" class="tab-panel">
         <div class="toolbar card">
           <div class="toolbar-group">
-            <input type="text" id="emp-search" class="input-control input-sm" placeholder="Search employ number, name, surname, bank..." />
+            <input type="text" id="emp-search" class="input-control input-sm"
+              placeholder="Search employ number, name, surname, bank..." />
             <select id="emp-status-filter" class="input-select input-sm">
               <option value="">All Statuses</option>
               <option value="Employed">Employed</option>
@@ -403,10 +440,14 @@
           <div class="toolbar-group" style="width:100%">
             <strong style="font-size:0.75rem;color:#a5b4fc">⚡ Quick Add:</strong>
             <input type="date" id="qa-date" class="input-control input-sm" style="width:125px" title="Date" />
-            <input type="text" id="qa-code" class="input-control input-sm" style="width:95px" placeholder="Emp # (auto)" />
-            <input type="text" id="qa-first" class="input-control input-sm" style="flex:1;min-width:95px" placeholder="Name *" required />
-            <input type="text" id="qa-last" class="input-control input-sm" style="flex:1;min-width:95px" placeholder="Surname *" required />
-            <input type="text" id="qa-bank" class="input-control input-sm" style="flex:1;min-width:120px" placeholder="Bank Number" />
+            <input type="text" id="qa-code" class="input-control input-sm" style="width:95px"
+              placeholder="Emp # (auto)" />
+            <input type="text" id="qa-first" class="input-control input-sm" style="flex:1;min-width:95px"
+              placeholder="Name *" required />
+            <input type="text" id="qa-last" class="input-control input-sm" style="flex:1;min-width:95px"
+              placeholder="Surname *" required />
+            <input type="text" id="qa-bank" class="input-control input-sm" style="flex:1;min-width:120px"
+              placeholder="Bank Number" />
             <select id="qa-status" class="input-select input-sm">
               <option value="Employed">Employed</option>
               <option value="Provisory">Provisory</option>
@@ -415,7 +456,8 @@
               <option value="base">Base Salary</option>
               <option value="hourly">Hourly Rate</option>
             </select>
-            <input type="text" inputmode="decimal" id="qa-pay-amount" class="input-control input-sm" style="width:115px" placeholder="Amount (Lek) *" required />
+            <input type="text" inputmode="decimal" id="qa-pay-amount" class="input-control input-sm" style="width:115px"
+              placeholder="Amount (Lek) *" required />
             <button type="submit" class="btn btn-primary btn-sm">+ Add</button>
           </div>
         </form>
@@ -444,13 +486,15 @@
       <section id="tab-salary-history" class="tab-panel">
         <div class="toolbar card">
           <div class="toolbar-group">
-            <input type="text" id="salary-history-search" class="input-control input-sm" style="min-width:240px" placeholder="Search employ number, name, surname, reason..." />
+            <input type="text" id="salary-history-search" class="input-control input-sm" style="min-width:240px"
+              placeholder="Search employ number, name, surname, reason..." />
             <select id="salary-history-emp-filter" class="input-select input-sm">
               <option value="">All Employees</option>
             </select>
           </div>
           <div class="toolbar-group">
-            <span style="font-size:0.76rem;color:#94a3b8">Every edit to Base Pay / Hr (hourly rate) is automatically registered here</span>
+            <span style="font-size:0.76rem;color:#94a3b8">Every edit to Base Pay / Hr (hourly rate) is automatically
+              registered here</span>
           </div>
         </div>
 
@@ -546,8 +590,10 @@
               <input type="number" id="set-sick-percent" min="0" max="100" value="80" />
             </div>
 
-            <div class="form-field full-width" style="margin-top:0.35rem;border-top:1px solid var(--border-color);padding-top:0.65rem">
-              <strong style="font-size:0.82rem;color:#a5b4fc">Payroll Net-to-Gross Tax &amp; Contribution Rates (%)</strong>
+            <div class="form-field full-width"
+              style="margin-top:0.35rem;border-top:1px solid var(--border-color);padding-top:0.65rem">
+              <strong style="font-size:0.82rem;color:#a5b4fc">Payroll Net-to-Gross Tax &amp; Contribution Rates
+                (%)</strong>
             </div>
 
             <div class="form-field">
@@ -565,18 +611,24 @@
               <input type="number" step="0.1" id="set-income-tax" min="0" max="99" value="13.0" />
             </div>
 
-            <div class="form-field full-width" style="margin-top:0.35rem;border-top:1px solid var(--border-color);padding-top:0.65rem">
-              <strong style="font-size:0.82rem;color:#a5b4fc">Excel &amp; PDF Report Header / Footer Customization</strong>
+            <div class="form-field full-width"
+              style="margin-top:0.35rem;border-top:1px solid var(--border-color);padding-top:0.65rem">
+              <strong style="font-size:0.82rem;color:#a5b4fc">Excel &amp; PDF Report Header / Footer
+                Customization</strong>
             </div>
 
             <div class="form-field full-width">
               <label>Export Header Paragraph / Company Details</label>
-              <textarea id="set-export-header" rows="3" class="input-control" style="width:100%;resize:vertical;font-family:inherit;font-size:0.8rem;padding:0.5rem" placeholder="e.g. Acme Corporation Sh.p.k.&#10;Tirana, Albania | NIPT: K12345678L&#10;Department of Human Resources &amp; Financial Management"></textarea>
+              <textarea id="set-export-header" rows="3" class="input-control"
+                style="width:100%;resize:vertical;font-family:inherit;font-size:0.8rem;padding:0.5rem"
+                placeholder="e.g. Acme Corporation Sh.p.k.&#10;Tirana, Albania | NIPT: K12345678L&#10;Department of Human Resources &amp; Financial Management"></textarea>
             </div>
 
             <div class="form-field full-width">
               <label>Export Footer Paragraph / Notice &amp; Legal Sign-off</label>
-              <textarea id="set-export-footer" rows="3" class="input-control" style="width:100%;resize:vertical;font-family:inherit;font-size:0.8rem;padding:0.5rem" placeholder="e.g. Confidential document for internal financial administration and banking purposes only.&#10;Approved by: Director of Human Resources ____________________&#10;Date of transmission: ____________________"></textarea>
+              <textarea id="set-export-footer" rows="3" class="input-control"
+                style="width:100%;resize:vertical;font-family:inherit;font-size:0.8rem;padding:0.5rem"
+                placeholder="e.g. Confidential document for internal financial administration and banking purposes only.&#10;Approved by: Director of Human Resources ____________________&#10;Date of transmission: ____________________"></textarea>
             </div>
 
             <div class="form-field full-width" style="flex-direction:row;justify-content:flex-end;margin-top:0.5rem">
@@ -590,7 +642,8 @@
       <section id="tab-users" class="tab-panel">
         <div class="toolbar card">
           <div class="toolbar-group">
-            <input type="text" id="users-search" class="input-control input-sm" placeholder="Search username, full name..." />
+            <input type="text" id="users-search" class="input-control input-sm"
+              placeholder="Search username, full name..." />
             <select id="users-status-filter" class="input-select input-sm">
               <option value="">All Statuses</option>
               <option value="pending">Pending Approval</option>
@@ -926,8 +979,10 @@
         </div>
         <div class="form-field full-width">
           <label id="lbl-edit-user-password">Password</label>
-          <input type="password" id="edit-user-password" class="input-control" placeholder="Leave blank to keep unchanged" autocomplete="new-password" />
-          <small style="color:var(--text-muted);font-size:0.75rem;margin-top:0.25rem;display:block" id="hint-edit-user-password">Leave empty to keep current password (min 4 characters).</small>
+          <input type="password" id="edit-user-password" class="input-control"
+            placeholder="Leave blank to keep unchanged" autocomplete="new-password" />
+          <small style="color:var(--text-muted);font-size:0.75rem;margin-top:0.25rem;display:block"
+            id="hint-edit-user-password">Leave empty to keep current password (min 4 characters).</small>
         </div>
         <div class="form-field">
           <label>Role *</label>
@@ -981,11 +1036,13 @@
     <div class="auth-card">
       <div class="auth-header">
         <div class="brand-logo" style="width:48px;height:48px;margin:0 auto 0.75rem;border-radius:12px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round" style="width:26px;height:26px">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
           </svg>
         </div>
-        <h2 style="font-size:1.25rem;font-weight:700;color:var(--text-main);margin-bottom:0.25rem">PulseHR Workforce Portal</h2>
+        <h2 style="font-size:1.25rem;font-weight:700;color:var(--text-main);margin-bottom:0.25rem">PulseHR Workforce
+          Portal</h2>
         <p id="auth-subtitle" style="font-size:0.78rem;color:#94a3b8">Sign in with your approved credentials</p>
       </div>
 
@@ -1000,17 +1057,20 @@
       <form id="form-login" class="form-grid" style="gap:0.75rem">
         <div class="form-field full-width">
           <label>Username *</label>
-          <input type="text" id="login-username" class="input-control" required placeholder="e.g. admin" autocomplete="username" />
+          <input type="text" id="login-username" class="input-control" required placeholder="e.g. admin"
+            autocomplete="username" />
         </div>
         <div class="form-field full-width">
           <label>Password *</label>
-          <input type="password" id="login-password" class="input-control" required placeholder="••••••••" autocomplete="current-password" />
+          <input type="password" id="login-password" class="input-control" required placeholder="••••••••"
+            autocomplete="current-password" />
         </div>
         <div class="form-field full-width" style="margin-top:0.4rem">
-          <button type="submit" class="btn btn-primary btn-block" style="width:100%;padding:0.6rem;font-weight:600">Sign In →</button>
+          <button type="submit" class="btn btn-primary btn-block" style="width:100%;padding:0.6rem;font-weight:600">Sign
+            In →</button>
         </div>
         <p style="font-size:0.74rem;color:#64748b;text-align:center;width:100%;margin-top:0.2rem">
-          Default administrator: <strong>admin</strong> / <strong>admin123</strong>
+          Default administrator: <strong>*****</strong> / <strong>*****</strong>
         </p>
       </form>
 
@@ -1022,14 +1082,17 @@
         </div>
         <div class="form-field full-width">
           <label>Username *</label>
-          <input type="text" id="reg-username" class="input-control" required placeholder="e.g. jdoe" autocomplete="username" />
+          <input type="text" id="reg-username" class="input-control" required placeholder="e.g. jdoe"
+            autocomplete="username" />
         </div>
         <div class="form-field full-width">
           <label>Password *</label>
-          <input type="password" id="reg-password" class="input-control" required placeholder="At least 4 characters" autocomplete="new-password" />
+          <input type="password" id="reg-password" class="input-control" required placeholder="At least 4 characters"
+            autocomplete="new-password" />
         </div>
         <div class="form-field full-width" style="margin-top:0.4rem">
-          <button type="submit" class="btn btn-primary btn-block" style="width:100%;padding:0.6rem;font-weight:600">Request Access →</button>
+          <button type="submit" class="btn btn-primary btn-block"
+            style="width:100%;padding:0.6rem;font-weight:600">Request Access →</button>
         </div>
         <p style="font-size:0.74rem;color:#f59e0b;text-align:center;width:100%;margin-top:0.2rem">
           Note: New accounts are submitted as <strong>Pending</strong> and require administrator approval before login.
@@ -1040,4 +1103,5 @@
 
   <script src="/js/app.js"></script>
 </body>
+
 </html>
