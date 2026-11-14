@@ -13,11 +13,9 @@ services:
     environment:
       - PORT=3000
       - NODE_ENV=production
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET}
-      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-    env_file:
-      - .env
+      - DATABASE_URL
+      - JWT_SECRET
+      - ENCRYPTION_KEY
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -34,15 +32,8 @@ services:
       - pulsehr-net
     environment:
       - TUNNEL_METRICS=0.0.0.0:2000
-    # Mode 1 (Production / Cloudflare Zero Trust Named Tunnel):
-    # Set CLOUDFLARE_TUNNEL_TOKEN in your .env file
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:-}
-
-    # Mode 2 (Quick Ad-Hoc / Temporary trycloudflare.com testing tunnel without token):
-    # Uncomment the line below and comment out the command above:
-    # command: tunnel --url http://app:3000
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
 
 networks:
   pulsehr-net:
     driver: bridge
-
