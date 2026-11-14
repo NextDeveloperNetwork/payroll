@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "None",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outFile": "./public/js/app.js",
+    "sourceMap": true
+  },
+  "include": ["src/client/**/*.ts"]
+}
+

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseHR — Workforce, Monthly Timetable &amp; Payroll</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script>
+    (function() {
+      try {
+        if (localStorage.getItem('pulsehr_theme') === 'light') {
+          document.documentElement.classList.add('theme-light');
+        }
+        if (localStorage.getItem('pulsehr_sidebar_collapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="compact-ui">
+  <div class="app-shell">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="brand">
+        <div class="brand-content">
+          <div class="brand-logo" title="PulseHR Workforce Management">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1 class="brand-title">PulseHR</h1>
+            <p class="brand-subtitle">Workforce &amp; Payroll</p>
+          </div>
+        </div>
+        <button type="button" class="btn-sidebar-toggle" id="btn-sidebar-toggle" title="Collapse sidebar (Ctrl+B)" aria-label="Toggle sidebar">
+          <svg class="toggle-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+            <line x1="9" x2="9" y1="3" y2="21"></line>
+            <path class="toggle-chevron" d="m15 9-3 3 3 3"></path>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="side-nav">
+        <button class="nav-item active" data-tab="dashboard" title="Overview Dashboard" data-i18n-title="nav_overview">
+          <span class="nav-icon">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+              <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+              <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+              <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+            </svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_overview">Overview</span>
+        </button>
+        <button class="nav-item" data-tab="timetable" title="Workhours Table" data-i18n-title="nav_timetable">
+          <span class="nav-icon">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="M8 14h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M16 14h.01"></path>
+              <path d="M8 18h.01"></path>
+              <path d="M12 18h.01"></path>
+              <path d="M16 18h.01"></path>
+            </svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_timetable">Workhours Table</span>
+        </button>
+        <button class="nav-item" data-tab="attendance" title="Time Logs" data-i18n-title="nav_attendance">
+          <span class="nav-icon">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_attendance">Time Logs</span>
+        </button>
+        <button class="nav-item" data-tab="payroll" title="Salary &amp; Payroll" data-i18n-title="nav_payroll">
+          <span class="nav-icon">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+              <line x1="2" x2="22" y1="10" y2="10"></line>
+              <line x1="6" x2="10" y1="15" y2="15"></line>
+              <line x1="14" x2="18" y1="15" y2="15"></line>
+            </svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_payroll">Salary &amp; Payroll</span>
+        </button>
+        <button class="nav-item" data-tab="employees" title="Employees Directory" data-i18n-title="nav_employees">
+          <span class="nav-icon">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_employees">Employees</span>
+        </button>
+        <button class="nav-item" data-tab="salary-history" title="Base Salary Records" data-i18n-title="nav_salary_history">
+          <span class="nav-icon">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+              <polyline points="16 7 22 7 22 13"></polyline>
+            </svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_salary_history">Base Salary Records</span>
+        </button>
+        <button class="nav-item admin-only" data-tab="settings" title="Settings" data-i18n-title="nav_settings">
+          <span class="nav-icon">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_settings">Settings</span>
+        </button>
+        <button class="nav-item admin-only" data-tab="users" title="User Approvals &amp; Access" data-i18n-title="nav_users">
+          <span class="nav-icon">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_users">User Approvals</span>
+        </button>
+      </nav>
+
+      <!-- User Profile & Controls -->
+      <div class="sidebar-user" id="sidebar-user-card" title="User Session">
+        <div class="user-avatar" id="sidebar-user-avatar">
+          <span id="session-user-initials">U</span>
+        </div>
+        <div class="user-info">
+          <div class="user-name" id="session-user-name">User</div>
+          <div class="user-meta">
+            <span id="session-user-role" class="badge"></span>
+          </div>
+        </div>
+        <button type="button" class="btn-logout" id="btn-logout" title="Log Out ⏻" aria-label="Log out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="unit-indicator" id="sidebar-unit-indicator" title="Current time unit">Unit: Hours</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-area">
+      <header class="topbar">
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <button type="button" class="btn btn-ghost btn-xs btn-topbar-collapse" id="btn-topbar-sidebar-toggle" title="Toggle Sidebar (Ctrl+B)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+              <line x1="9" x2="9" y1="3" y2="21"></line>
+              <path d="m14 9-3 3 3 3"></path>
+            </svg>
+          </button>
+          <div>
+            <h2 id="page-title" class="page-title">Overview Dashboard</h2>
+            <p id="page-subtitle" class="page-subtitle">Real-time workforce analytics, monthly hours &amp; payroll</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <span class="unit-pill" id="topbar-unit-pill" title="Click to change in Settings" data-jump="settings">⏱ Unit: Hours</span>
+          <!-- Language Selector -->
+          <div class="lang-selector">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-lang-toggle" title="Translate / Ndrysho Gjuhën / Cambia Lingua" style="display:inline-flex;align-items:center;gap:0.35rem">
+              <span id="lang-flag">🇬🇧</span> <span id="lang-label">EN</span> <span style="font-size:0.58rem;opacity:0.7">▼</span>
+            </button>
+            <div class="lang-dropdown hidden" id="lang-dropdown">
+              <button type="button" class="lang-opt" data-lang="en">
+                <span>🇬🇧</span> <span>English</span> <span class="lang-check" data-check="en">✓</span>
+              </button>
+              <button type="button" class="lang-opt" data-lang="sq">
+                <span>🇦🇱</span> <span>Shqip</span> <span class="lang-check" data-check="sq"></span>
+              </button>
+              <button type="button" class="lang-opt" data-lang="it">
+                <span>🇮🇹</span> <span>Italiano</span> <span class="lang-check" data-check="it"></span>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-theme-toggle" title="Toggle Clear / Dark Theme">
+            <span id="theme-toggle-icon">☀️</span> <span id="theme-toggle-label">Clear</span>
+          </button>
+          <button class="btn btn-secondary btn-sm admin-only" id="btn-quick-attendance" data-i18n="btn_log_time">+ Log Time</button>
+          <button class="btn btn-primary btn-sm admin-only" id="btn-quick-employee" data-i18n="btn_employee">+ Employee</button>
+        </div>
+      </header>
+
+      <div id="toast-container" class="toast-container"></div>
+
+      <!-- TAB 1: DASHBOARD -->
+      <section id="tab-dashboard" class="tab-panel active"></section>
+
+      <!-- TAB 2: WORKHOURS TIMETABLE (MONTHLY + WEEKLY) -->
+      <section id="tab-timetable" class="tab-panel">
+        <div class="toolbar card">
+          <div class="toolbar-group">
+            <div class="segmented-control">
+              <button class="seg-btn active" id="btn-view-monthly">Monthly</button>
+              <button class="seg-btn" id="btn-view-weekly">Weekly</button>
+            </div>
+
+            <div id="monthly-nav-controls" class="toolbar-group">
+              <button class="btn btn-secondary btn-xs" id="btn-prev-month">←</button>
+              <input type="month" id="timetable-month-picker" class="input-control input-sm" />
+              <button class="btn btn-secondary btn-xs" id="btn-next-month">→</button>
+            </div>
+
+            <div id="weekly-nav-controls" class="toolbar-group hidden">
+              <button class="btn btn-secondary btn-xs" id="btn-prev-week">← Prev</button>
+              <button class="btn btn-ghost btn-xs" id="btn-curr-week">Today</button>
+              <button class="btn btn-secondary btn-xs" id="btn-next-week">Next →</button>
+              <span id="timetable-week-label" class="week-label"></span>
+            </div>
+          </div>
+
+          <div class="toolbar-group">
+            <button class="btn btn-secondary btn-xs admin-only" id="btn-toggle-select" title="Click or Shift+Click cells to select multiple">☑ Select</button>
+            <button class="btn btn-secondary btn-xs admin-only" id="btn-autofill-period">⚡ Auto-Fill Mon–Sat</button>
+            <button class="btn btn-secondary btn-xs" id="btn-export-timetable-excel">📊 Export Excel</button>
+            <button class="btn btn-secondary btn-xs" id="btn-export-timetable-pdf">📄 Export PDF</button>
+            <button class="btn btn-danger btn-xs admin-only" id="btn-clear-timetable">🗑 Clear All</button>
+            <button class="btn btn-primary btn-xs admin-only" id="btn-add-shift">+ Shift</button>
+          </div>
+        </div>
+
+        <div id="selection-action-bar" class="selection-bar card hidden">
+          <div class="toolbar-group">
+            <strong id="selection-count">0 selected</strong>
+            <input type="text" inputmode="decimal" id="batch-value-input" class="input-control input-sm" style="width:90px" placeholder="Hours/Min" />
+            <button class="btn btn-primary btn-xs" id="btn-batch-apply-val">Apply Value</button>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn btn-secondary btn-xs" data-batch-type="Leave">Leave</button>
+            <button class="btn btn-secondary btn-xs" data-batch-type="Absence">Absence</button>
+            <button class="btn btn-secondary btn-xs" data-batch-type="Holiday">Holiday</button>
+            <button class="btn btn-secondary btn-xs" data-batch-type="Sick">Sick</button>
+            <button class="btn btn-danger btn-xs" id="btn-batch-clear">Clear Selected</button>
+            <button class="btn btn-ghost btn-xs" id="btn-batch-deselect">Deselect</button>
+          </div>
+        </div>
+
+        <div class="shift-legend">
+          <span class="legend-item"><span class="shift-dot shift-Morning"></span> Morning</span>
+          <span class="legend-item"><span class="shift-dot shift-Afternoon"></span> Afternoon</span>
+          <span class="legend-item"><span class="shift-dot shift-Night"></span> Night</span>
+          <span class="legend-item"><span class="shift-dot shift-Remote"></span> Remote</span>
+          <span class="legend-item"><span class="shift-dot shift-Leave"></span> Leave</span>
+          <span class="legend-item"><span class="shift-dot shift-Holiday"></span> Holiday</span>
+          <span class="legend-item"><span class="shift-dot shift-Sick"></span> Sick</span>
+          <span class="legend-item"><span class="shift-dot shift-Absence"></span> Absence</span>
+          <span class="legend-item"><span class="shift-dot shift-Off"></span> Off</span>
+          <span class="legend-hint">Click cell to type <strong id="legend-unit-label">Hours</strong> • Right-click for Leave / Absence / Holiday / Sick</span>
+        </div>
+
+        <div class="card table-wrap matrix-scroll" id="timetable-matrix-container"></div>
+      </section>
+
+      <!-- TAB 3: TIME LOGS (LEAVES, ABSENCES & SICK) -->
+      <section id="tab-attendance" class="tab-panel">
+        <div class="toolbar card">
+          <div class="toolbar-group">
+            <input type="text" id="timelog-search" class="input-control input-sm" style="min-width:190px" placeholder="Search emp #, name, surname..." />
+            <select id="timelog-type-filter" class="input-select input-sm">
+              <option value="">All (Leave / Absence / Sick)</option>
+              <option value="Leave">Leave</option>
+              <option value="Absence">Absence</option>
+              <option value="Sick">Sick</option>
+            </select>
+            <label class="field-inline">
+              <span>From:</span>
+              <input type="date" id="timelog-from" class="input-control input-sm" />
+            </label>
+            <label class="field-inline">
+              <span>To:</span>
+              <input type="date" id="timelog-to" class="input-control input-sm" />
+            </label>
+            <button class="btn btn-ghost btn-xs" id="btn-timelog-clear-dates">All Time</button>
+          </div>
+          <div class="toolbar-group">
+            <span style="font-size:0.74rem;color:#94a3b8">Synced from Workhours Table right-click entries</span>
+          </div>
+        </div>
+
+        <div class="kpi-grid kpi-grid-compact" id="timelog-summary-cards"></div>
+
+        <div class="card table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="th_date">Date</th>
+                <th data-i18n="th_emp_code">Employ Number</th>
+                <th data-i18n="th_name">Name</th>
+                <th data-i18n="th_surname">Surname</th>
+                <th data-i18n="th_role">Type</th>
+                <th data-i18n="th_worked_time">Calculated Time</th>
+                <th data-i18n="th_total_pay">Calculated Pay (Lek)</th>
+                <th data-i18n="th_reason">Notes</th>
+                <th data-i18n="th_actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="timelog-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: SALARY & PAYROLL MANAGEMENT -->
+      <section id="tab-payroll" class="tab-panel">
+        <div class="toolbar card">
+          <div class="toolbar-group">
+            <label class="field-inline">
+              <span>Period:</span>
+              <input type="month" id="payroll-period-picker" class="input-control input-sm" />
+            </label>
+            <select id="payroll-status-filter" class="input-select input-sm" title="Payment Status">
+              <option value="">All Payment Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Paid">Paid</option>
+            </select>
+            <select id="payroll-emp-status-filter" class="input-select input-sm" title="Employee Status">
+              <option value="">All Employee Statuses</option>
+              <option value="Employed">Employed</option>
+              <option value="Provisory">Provisory</option>
+              <option value="Active">Active</option>
+              <option value="Terminated">Terminated</option>
+            </select>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn btn-secondary btn-xs" id="btn-export-payroll-bank" data-i18n="btn_export_bank">🏦 Export for Bank</button>
+            <button class="btn btn-secondary btn-xs" id="btn-export-payroll-excel" data-i18n="btn_export_excel">📊 Export Excel</button>
+            <button class="btn btn-secondary btn-xs admin-only" id="btn-generate-period-payroll" data-i18n="btn_recalc_payroll">⚡ Run Monthly Payroll</button>
+            <button class="btn btn-primary btn-xs admin-only" id="btn-open-payroll-modal">+ Custom Entry</button>
+          </div>
+        </div>
+
+        <div id="payroll-settings-banner" class="toolbar card" style="padding:0.45rem 0.85rem;font-size:0.78rem"></div>
+
+        <div class="kpi-grid kpi-grid-compact" id="payroll-summary-cards"></div>
+
+        <div class="card table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="th_date">Date</th>
+                <th data-i18n="th_bank_num">Bank Number</th>
+                <th data-i18n="th_name">Name</th>
+                <th data-i18n="th_net_salary">Net Salary</th>
+                <th data-i18n="th_social_sec">Social Security</th>
+                <th data-i18n="th_med_sec">Medical Security</th>
+                <th data-i18n="th_income_tax">Income Tax</th>
+                <th data-i18n="th_gross_pay">Gross Pay</th>
+                <th data-i18n="th_status">Status</th>
+                <th data-i18n="th_actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="payroll-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 5: EMPLOYEES DIRECTORY -->
+      <section id="tab-employees" class="tab-panel">
+        <div class="toolbar card">
+          <div class="toolbar-group">
+            <input type="text" id="emp-search" class="input-control input-sm" placeholder="Search employ number, name, surname, bank..." />
+            <select id="emp-status-filter" class="input-select input-sm">
+              <option value="">All Statuses</option>
+              <option value="Employed">Employed</option>
+              <option value="Provisory">Provisory</option>
+              <option value="Active">Active</option>
+              <option value="Terminated">Terminated</option>
+            </select>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn btn-secondary btn-xs" id="btn-sample-emp-csv">⬇ Sample CSV</button>
+            <button class="btn btn-secondary btn-xs" id="btn-export-emp-csv">⬇ Export CSV</button>
+            <button class="btn btn-secondary btn-xs admin-only" id="btn-import-emp-csv">⬆ Import CSV</button>
+            <input type="file" id="emp-csv-file" accept=".csv,text/csv" class="hidden" />
+            <button class="btn btn-primary btn-sm admin-only" id="btn-open-emp-modal">+ Full Form</button>
+          </div>
+        </div>
+
+        <form id="form-quick-add-emp" class="toolbar card admin-only" style="gap:0.4rem">
+          <div class="toolbar-group" style="width:100%">
+            <strong style="font-size:0.75rem;color:#a5b4fc">⚡ Quick Add:</strong>
+            <input type="date" id="qa-date" class="input-control input-sm" style="width:125px" title="Date" />
+            <input type="text" id="qa-code" class="input-control input-sm" style="width:95px" placeholder="Emp # (auto)" />
+            <input type="text" id="qa-first" class="input-control input-sm" style="flex:1;min-width:95px" placeholder="Name *" required />
+            <input type="text" id="qa-last" class="input-control input-sm" style="flex:1;min-width:95px" placeholder="Surname *" required />
+            <input type="text" id="qa-bank" class="input-control input-sm" style="flex:1;min-width:120px" placeholder="Bank Number" />
+            <select id="qa-status" class="input-select input-sm">
+              <option value="Employed">Employed</option>
+              <option value="Provisory">Provisory</option>
+            </select>
+            <select id="qa-pay-type" class="input-select input-sm">
+              <option value="base">Base Salary</option>
+              <option value="hourly">Hourly Rate</option>
+            </select>
+            <input type="text" inputmode="decimal" id="qa-pay-amount" class="input-control input-sm" style="width:115px" placeholder="Amount (Lek) *" required />
+            <button type="submit" class="btn btn-primary btn-sm">+ Add</button>
+          </div>
+        </form>
+
+        <div class="card table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="th_date">Date</th>
+                <th data-i18n="th_emp_code">Employ Number</th>
+                <th data-i18n="th_name">Name</th>
+                <th data-i18n="th_surname">Surname</th>
+                <th data-i18n="th_bank_num">Bank Number</th>
+                <th data-i18n="th_status">Status</th>
+                <th data-i18n="th_base_salary">Base Salary (click to edit)</th>
+                <th data-i18n="th_base_rate">Hourly Rate (click to edit)</th>
+                <th data-i18n="th_actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="employees-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 6: BASE SALARY RECORDS -->
+      <section id="tab-salary-history" class="tab-panel">
+        <div class="toolbar card">
+          <div class="toolbar-group">
+            <input type="text" id="salary-history-search" class="input-control input-sm" style="min-width:240px" placeholder="Search employ number, name, surname, reason..." />
+            <select id="salary-history-emp-filter" class="input-select input-sm">
+              <option value="">All Employees</option>
+            </select>
+          </div>
+          <div class="toolbar-group">
+            <span style="font-size:0.76rem;color:#94a3b8">Every edit to Base Pay / Hr (hourly rate) is automatically registered here</span>
+          </div>
+        </div>
+
+        <div class="card table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="th_date">Timestamp</th>
+                <th data-i18n="th_name">Name</th>
+                <th data-i18n="th_surname">Surname</th>
+                <th data-i18n="th_price_hr">Hour / Price</th>
+              </tr>
+            </thead>
+            <tbody id="salary-history-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 7: SETTINGS -->
+      <section id="tab-settings" class="tab-panel admin-only">
+        <div class="card settings-card">
+          <div class="card-header">
+            <h3>Time Keeping &amp; Workspace Preferences</h3>
+          </div>
+          <form id="form-settings" class="form-grid">
+            <div class="form-field full-width">
+              <label>Record &amp; Display Time Unit *</label>
+              <div class="radio-cards">
+                <label class="radio-card">
+                  <input type="radio" name="setting-time-unit" value="hours" id="set-unit-hours" checked />
+                  <div>
+                    <strong>Hours (e.g. 8.0h, 160.0h)</strong>
+                    <p>Keep timetable, time logs, and work targets in decimal hours.</p>
+                  </div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="setting-time-unit" value="minutes" id="set-unit-minutes" />
+                  <div>
+                    <strong>Minutes (e.g. 480m, 9600m)</strong>
+                    <p>Keep timetable, time logs, and work targets in exact minutes.</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label>UI Density</label>
+              <select id="set-compact-mode">
+                <option value="true">Compact (High Density)</option>
+                <option value="false">Standard (Relaxed)</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Interface Theme</label>
+              <select id="set-theme-mode">
+                <option value="dark">Dark Theme (Default)</option>
+                <option value="light">Clear Theme (Light)</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Interface Language / Gjuhë / Lingua</label>
+              <select id="set-lang-select">
+                <option value="en">🇬🇧 English</option>
+                <option value="sq">🇦🇱 Shqip (Albanian)</option>
+                <option value="it">🇮🇹 Italiano (Italian)</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Standard Workday Length (Minutes)</label>
+              <input type="number" id="set-std-minutes" min="60" max="1440" value="480" />
+            </div>
+
+            <div class="form-field">
+              <label>Default Shift Start</label>
+              <input type="time" id="set-shift-start" value="09:00" />
+            </div>
+
+            <div class="form-field">
+              <label>Default Shift End</label>
+              <input type="time" id="set-shift-end" value="17:00" />
+            </div>
+
+            <div class="form-field">
+              <label>Default Break Duration (Minutes)</label>
+              <input type="number" id="set-break-minutes" min="0" max="240" value="60" />
+            </div>
+
+            <div class="form-field">
+              <label>Sick Day Calculation (% of Standard Day)</label>
+              <input type="number" id="set-sick-percent" min="0" max="100" value="80" />
+            </div>
+
+            <div class="form-field full-width" style="margin-top:0.35rem;border-top:1px solid var(--border-color);padding-top:0.65rem">
+              <strong style="font-size:0.82rem;color:#a5b4fc">Payroll Net-to-Gross Tax &amp; Contribution Rates (%)</strong>
+            </div>
+
+            <div class="form-field">
+              <label>Social Security (%)</label>
+              <input type="number" step="0.1" id="set-social-sec" min="0" max="99" value="9.5" />
+            </div>
+
+            <div class="form-field">
+              <label>Medical Security (%)</label>
+              <input type="number" step="0.1" id="set-medical-sec" min="0" max="99" value="1.7" />
+            </div>
+
+            <div class="form-field">
+              <label>Tax Over Income (%)</label>
+              <input type="number" step="0.1" id="set-income-tax" min="0" max="99" value="13.0" />
+            </div>
+
+            <div class="form-field full-width" style="margin-top:0.35rem;border-top:1px solid var(--border-color);padding-top:0.65rem">
+              <strong style="font-size:0.82rem;color:#a5b4fc">Excel &amp; PDF Report Header / Footer Customization</strong>
+            </div>
+
+            <div class="form-field full-width">
+              <label>Export Header Paragraph / Company Details</label>
+              <textarea id="set-export-header" rows="3" class="input-control" style="width:100%;resize:vertical;font-family:inherit;font-size:0.8rem;padding:0.5rem" placeholder="e.g. Acme Corporation Sh.p.k.&#10;Tirana, Albania | NIPT: K12345678L&#10;Department of Human Resources &amp; Financial Management"></textarea>
+            </div>
+
+            <div class="form-field full-width">
+              <label>Export Footer Paragraph / Notice &amp; Legal Sign-off</label>
+              <textarea id="set-export-footer" rows="3" class="input-control" style="width:100%;resize:vertical;font-family:inherit;font-size:0.8rem;padding:0.5rem" placeholder="e.g. Confidential document for internal financial administration and banking purposes only.&#10;Approved by: Director of Human Resources ____________________&#10;Date of transmission: ____________________"></textarea>
+            </div>
+
+            <div class="form-field full-width" style="flex-direction:row;justify-content:flex-end;margin-top:0.5rem">
+              <button type="submit" class="btn btn-primary admin-only">Save Settings</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 8: USER APPROVALS & ACCESS MANAGEMENT (ADMIN ONLY) -->
+      <section id="tab-users" class="tab-panel">
+        <div class="toolbar card">
+          <div class="toolbar-group">
+            <input type="text" id="users-search" class="input-control input-sm" placeholder="Search username, full name..." />
+            <select id="users-status-filter" class="input-select input-sm">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending Approval</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <select id="users-role-filter" class="input-select input-sm">
+              <option value="">All Roles</option>
+              <option value="admin">Admin</option>
+              <option value="viewer">Viewer (Read-Only)</option>
+            </select>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn btn-primary btn-xs" id="btn-add-user">+ Add User</button>
+            <button class="btn btn-secondary btn-xs" id="btn-refresh-users">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <div class="card table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="th_date">Registered Date</th>
+                <th data-i18n="th_username">Username</th>
+                <th data-i18n="th_fullname">Full Name</th>
+                <th data-i18n="th_role">Role</th>
+                <th data-i18n="th_status">Status</th>
+                <th data-i18n="th_actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: EMPLOYEE CREATE / EDIT -->
+  <div id="modal-employee" class="modal-backdrop hidden">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3 id="modal-emp-title">Add New Employee</h3>
+        <button class="modal-close" data-close="modal-employee">&times;</button>
+      </div>
+      <form id="form-employee" class="modal-body form-grid">
+        <input type="hidden" id="emp-id" />
+        <div class="form-field">
+          <label>Date *</label>
+          <input type="date" id="emp-hire-date" required />
+        </div>
+        <div class="form-field">
+          <label>Employ Number *</label>
+          <input type="text" id="emp-code" required placeholder="EMP-1007" />
+        </div>
+        <div class="form-field">
+          <label>Name *</label>
+          <input type="text" id="emp-first-name" required />
+        </div>
+        <div class="form-field">
+          <label>Surname *</label>
+          <input type="text" id="emp-last-name" required />
+        </div>
+        <div class="form-field">
+          <label>Bank Number</label>
+          <input type="text" id="emp-bank" />
+        </div>
+        <div class="form-field">
+          <label>Status</label>
+          <select id="emp-status">
+            <option value="Employed">Employed</option>
+            <option value="Provisory">Provisory</option>
+            <option value="Terminated">Terminated</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Pay Type *</label>
+          <select id="emp-pay-type">
+            <option value="base">Base Salary (Lek)</option>
+            <option value="hourly">Hourly Rate (Lek/h)</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label id="emp-pay-amount-label">Amount (Lek) *</label>
+          <input type="number" step="0.01" id="emp-pay-amount" required value="50000.00" />
+        </div>
+        <div class="form-field full-width">
+          <label>Hourly Rate Change Reason (if edited)</label>
+          <input type="text" id="emp-salary-reason" placeholder="e.g. Annual raise, Promotion..." />
+        </div>
+        <div class="modal-footer full-width">
+          <button type="button" class="btn btn-secondary btn-sm" data-close="modal-employee">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: SHIFT / TIMETABLE ASSIGNMENT -->
+  <div id="modal-schedule" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-schedule-title">Assign / Edit Shift</h3>
+        <button class="modal-close" data-close="modal-schedule">&times;</button>
+      </div>
+      <form id="form-schedule" class="modal-body form-grid">
+        <input type="hidden" id="sched-id" />
+        <div class="form-field full-width">
+          <label>Employee *</label>
+          <select id="sched-employee" required></select>
+        </div>
+        <div class="form-field">
+          <label>Date *</label>
+          <input type="date" id="sched-date" required />
+        </div>
+        <div class="form-field">
+          <label>Shift Type *</label>
+          <select id="sched-type">
+            <option value="Morning">Morning</option>
+            <option value="Afternoon">Afternoon</option>
+            <option value="Night">Night</option>
+            <option value="Remote">Remote</option>
+            <option value="Leave">Leave</option>
+            <option value="Holiday">Holiday</option>
+            <option value="Sick">Sick</option>
+            <option value="Absence">Absence</option>
+            <option value="Off">Off</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Start Time *</label>
+          <input type="time" id="sched-start" value="09:00" required />
+        </div>
+        <div class="form-field">
+          <label>End Time *</label>
+          <input type="time" id="sched-end" value="17:00" required />
+        </div>
+        <div class="form-field">
+          <label>Break (Minutes)</label>
+          <input type="number" id="sched-break" value="60" min="0" max="240" />
+        </div>
+        <div class="form-field">
+          <label>Notes</label>
+          <input type="text" id="sched-notes" />
+        </div>
+        <div class="modal-footer full-width">
+          <button type="button" class="btn btn-danger btn-sm hidden" id="btn-delete-sched">Delete</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-close="modal-schedule">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Shift</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ATTENDANCE LOG -->
+  <div id="modal-attendance" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Log Workhours &amp; Attendance</h3>
+        <button class="modal-close" data-close="modal-attendance">&times;</button>
+      </div>
+      <form id="form-attendance" class="modal-body form-grid">
+        <div class="form-field full-width">
+          <label>Employee *</label>
+          <select id="att-employee" required></select>
+        </div>
+        <div class="form-field">
+          <label>Date *</label>
+          <input type="date" id="att-date" required />
+        </div>
+        <div class="form-field">
+          <label>Status</label>
+          <select id="att-status">
+            <option value="">Auto-Detect</option>
+            <option value="Present">Present</option>
+            <option value="Overtime">Overtime</option>
+            <option value="Remote">Remote</option>
+            <option value="Late">Late</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Clock In</label>
+          <input type="time" id="att-in" value="09:00" />
+        </div>
+        <div class="form-field">
+          <label>Clock Out</label>
+          <input type="time" id="att-out" value="17:30" />
+        </div>
+        <div class="form-field">
+          <label>Break (Minutes)</label>
+          <input type="number" id="att-break" value="60" min="0" />
+        </div>
+        <div class="form-field">
+          <label id="att-direct-label">Or Direct Worked Duration (optional)</label>
+          <input type="number" step="0.1" id="att-direct-duration" placeholder="Leave blank to use In/Out" />
+        </div>
+        <div class="form-field full-width">
+          <label>Notes</label>
+          <input type="text" id="att-notes" />
+        </div>
+        <div class="modal-footer full-width">
+          <button type="button" class="btn btn-secondary btn-sm" data-close="modal-attendance">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Time Log</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CUSTOM PAYROLL ENTRY -->
+  <div id="modal-payroll" class="modal-backdrop hidden">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3>Create Payroll Record</h3>
+        <button class="modal-close" data-close="modal-payroll">&times;</button>
+      </div>
+      <form id="form-payroll" class="modal-body form-grid">
+        <div class="form-field">
+          <label>Employee *</label>
+          <select id="pay-employee" required></select>
+        </div>
+        <div class="form-field">
+          <label>Pay Period *</label>
+          <input type="month" id="pay-period" required />
+        </div>
+        <div class="form-field">
+          <label>Net Payment (Lek)</label>
+          <input type="number" step="0.01" id="pay-base" required />
+        </div>
+        <div class="form-field">
+          <label>Regular Hours</label>
+          <input type="number" step="0.5" id="pay-reg-hours" value="160" />
+        </div>
+        <div class="form-field">
+          <label>Overtime Hours</label>
+          <input type="number" step="0.5" id="pay-ot-hours" value="0" />
+        </div>
+        <div class="form-field">
+          <label>Bonus (Lek)</label>
+          <input type="number" step="0.01" id="pay-bonuses" value="0.00" />
+        </div>
+        <div class="form-field">
+          <label>Allowances (Lek)</label>
+          <input type="number" step="0.01" id="pay-allowances" value="150.00" />
+        </div>
+        <div class="form-field">
+          <label>Deductions (Lek)</label>
+          <input type="number" step="0.01" id="pay-deductions" value="0.00" />
+        </div>
+        <div class="form-field">
+          <label>Status</label>
+          <select id="pay-status">
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Paid">Paid</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Notes</label>
+          <input type="text" id="pay-notes" />
+        </div>
+        <div class="modal-footer full-width">
+          <button type="button" class="btn btn-secondary btn-sm" data-close="modal-payroll">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Payroll</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PAYSLIP VIEWER -->
+  <div id="modal-payslip" class="modal-backdrop hidden">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3>Employee Payslip</h3>
+        <button class="modal-close" data-close="modal-payslip">&times;</button>
+      </div>
+      <div id="payslip-content" class="modal-body payslip-sheet"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-close="modal-payslip">Close</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-print-payslip">🖨 Print</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRM CLEAR ALL TABLE -->
+  <div id="modal-confirm-clear" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Confirm Clear Workhours Table</h3>
+        <button class="modal-close" data-close="modal-confirm-clear">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-clear-msg" style="font-size:0.88rem;line-height:1.5"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-close="modal-confirm-clear">Cancel</button>
+        <button type="button" class="btn btn-danger btn-sm" id="btn-confirm-clear-exec">Yes, Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRM DELETE EMPLOYEE -->
+  <div id="modal-confirm-delete-emp" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Confirm Delete Employee</h3>
+        <button class="modal-close" data-close="modal-confirm-delete-emp">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-del-emp-msg" style="font-size:0.88rem;line-height:1.5"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-close="modal-confirm-delete-emp">Cancel</button>
+        <button type="button" class="btn btn-danger btn-sm" id="btn-confirm-del-emp-exec">Yes, Delete Employee</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT USER & PASSWORD -->
+  <div id="modal-user" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-user-title">Edit User Credentials</h3>
+        <button class="modal-close" data-close="modal-user">&times;</button>
+      </div>
+      <form id="form-user" class="modal-body form-grid">
+        <input type="hidden" id="edit-user-id" />
+        <div class="form-field full-width">
+          <label>Username *</label>
+          <input type="text" id="edit-user-username" class="input-control" required autocomplete="off" />
+        </div>
+        <div class="form-field full-width">
+          <label>Full Name</label>
+          <input type="text" id="edit-user-fullname" class="input-control" autocomplete="off" />
+        </div>
+        <div class="form-field full-width">
+          <label id="lbl-edit-user-password">Password</label>
+          <input type="password" id="edit-user-password" class="input-control" placeholder="Leave blank to keep unchanged" autocomplete="new-password" />
+          <small style="color:var(--text-muted);font-size:0.75rem;margin-top:0.25rem;display:block" id="hint-edit-user-password">Leave empty to keep current password (min 4 characters).</small>
+        </div>
+        <div class="form-field">
+          <label>Role *</label>
+          <select id="edit-user-role" class="input-select">
+            <option value="viewer">Viewer (Read-Only)</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Status *</label>
+          <select id="edit-user-status" class="input-select">
+            <option value="approved">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="modal-footer full-width">
+          <button type="button" class="btn btn-secondary btn-sm" data-close="modal-user">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONTEXT MENU FOR WORKHOURS CELLS -->
+  <div id="cell-context-menu" class="context-menu hidden">
+    <div class="context-menu-header" id="ctx-cell-label">Day Options</div>
+    <button type="button" class="context-item" data-ctx-type="Leave">
+      <span class="shift-dot shift-Leave"></span> Insert Leave
+    </button>
+    <button type="button" class="context-item" data-ctx-type="Absence">
+      <span class="shift-dot shift-Absence"></span> Insert Absence
+    </button>
+    <button type="button" class="context-item" data-ctx-type="Holiday">
+      <span class="shift-dot shift-Holiday"></span> Insert Holiday
+    </button>
+    <button type="button" class="context-item" data-ctx-type="Sick">
+      <span class="shift-dot shift-Sick"></span> Insert Sick <span class="ctx-sub" id="ctx-sick-hint"></span>
+    </button>
+    <div class="context-divider"></div>
+    <button type="button" class="context-item" data-ctx-action="edit-modal">
+      ✏️ Edit Full Shift…
+    </button>
+    <button type="button" class="context-item context-danger" data-ctx-action="clear">
+      🗑 Clear Cell
+    </button>
+  </div>
+
+  <!-- AUTH OVERLAY / LOGIN & REGISTER MODAL -->
+  <div id="auth-overlay" class="auth-overlay hidden">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="brand-logo" style="width:48px;height:48px;margin:0 auto 0.75rem;border-radius:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <h2 style="font-size:1.25rem;font-weight:700;color:var(--text-main);margin-bottom:0.25rem">PulseHR Workforce Portal</h2>
+        <p id="auth-subtitle" style="font-size:0.78rem;color:#94a3b8">Sign in with your approved credentials</p>
+      </div>
+
+      <div class="segmented-control" style="margin-bottom:1rem">
+        <button type="button" class="seg-btn active" id="btn-auth-mode-login">Login</button>
+        <button type="button" class="seg-btn" id="btn-auth-mode-register">Register</button>
+      </div>
+
+      <div id="auth-alert" class="auth-alert hidden"></div>
+
+      <!-- Login Form -->
+      <form id="form-login" class="form-grid" style="gap:0.75rem">
+        <div class="form-field full-width">
+          <label>Username *</label>
+          <input type="text" id="login-username" class="input-control" required placeholder="e.g. admin" autocomplete="username" />
+        </div>
+        <div class="form-field full-width">
+          <label>Password *</label>
+          <input type="password" id="login-password" class="input-control" required placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <div class="form-field full-width" style="margin-top:0.4rem">
+          <button type="submit" class="btn btn-primary btn-block" style="width:100%;padding:0.6rem;font-weight:600">Sign In →</button>
+        </div>
+        <p style="font-size:0.74rem;color:#64748b;text-align:center;width:100%;margin-top:0.2rem">
+          Default administrator: <strong>admin</strong> / <strong>admin123</strong>
+        </p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="form-register" class="form-grid hidden" style="gap:0.75rem">
+        <div class="form-field full-width">
+          <label>Full Name *</label>
+          <input type="text" id="reg-fullname" class="input-control" required placeholder="e.g. Jane Doe" />
+        </div>
+        <div class="form-field full-width">
+          <label>Username *</label>
+          <input type="text" id="reg-username" class="input-control" required placeholder="e.g. jdoe" autocomplete="username" />
+        </div>
+        <div class="form-field full-width">
+          <label>Password *</label>
+          <input type="password" id="reg-password" class="input-control" required placeholder="At least 4 characters" autocomplete="new-password" />
+        </div>
+        <div class="form-field full-width" style="margin-top:0.4rem">
+          <button type="submit" class="btn btn-primary btn-block" style="width:100%;padding:0.6rem;font-weight:600">Request Access →</button>
+        </div>
+        <p style="font-size:0.74rem;color:#f59e0b;text-align:center;width:100%;margin-top:0.2rem">
+          Note: New accounts are submitted as <strong>Pending</strong> and require administrator approval before login.
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

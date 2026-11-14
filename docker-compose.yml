@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # PulseHR Workforce & HR Management App
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pulsehr-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - pulsehr-net
+
+  # Cloudflare Tunnel for secure external HTTPS access
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: pulsehr-cloudflare-tunnel
+    restart: unless-stopped
+    depends_on:
+      - app
+    networks:
+      - pulsehr-net
+    environment:
+      - TUNNEL_METRICS=0.0.0.0:2000
+    # Mode 1 (Production / Cloudflare Zero Trust Named Tunnel):
+    # Set CLOUDFLARE_TUNNEL_TOKEN in your .env file
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:-}
+
+    # Mode 2 (Quick Ad-Hoc / Temporary trycloudflare.com testing tunnel without token):
+    # Uncomment the line below and comment out the command above:
+    # command: tunnel --url http://app:3000
+
+networks:
+  pulsehr-net:
+    driver: bridge
+
