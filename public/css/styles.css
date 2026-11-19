@@ -2311,3 +2311,101 @@ body.theme-light .overview-table-card {
   border-color: #e2e8f0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
+/* --- Row Selection & Lighting Up in Timetable Matrix --- */
+.monthly-table tbody tr.tt-row,
+.timetable-table tbody tr.tt-row {
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.monthly-table tbody tr.tt-row:hover td,
+.timetable-table tbody tr.tt-row:hover td {
+  background-color: rgba(56, 189, 248, 0.05);
+}
+
+.monthly-table tbody tr.tt-row:hover td.sticky-col,
+.timetable-table tbody tr.tt-row:hover td.sticky-col {
+  background-color: #1e293b;
+  cursor: pointer;
+}
+
+body.theme-light .monthly-table tbody tr.tt-row:hover td,
+body.theme-light .timetable-table tbody tr.tt-row:hover td {
+  background-color: #f1f5f9;
+}
+
+body.theme-light .monthly-table tbody tr.tt-row:hover td.sticky-col,
+body.theme-light .timetable-table tbody tr.tt-row:hover td.sticky-col {
+  background-color: #f8fafc;
+}
+
+/* Selected / Active Row - Lit Up (Dark Theme) */
+.monthly-table tbody tr.tt-row.row-selected,
+.timetable-table tbody tr.tt-row.row-selected {
+  position: relative;
+  z-index: 1;
+}
+
+.monthly-table tbody tr.tt-row.row-selected td,
+.timetable-table tbody tr.tt-row.row-selected td {
+  background-color: rgba(14, 165, 233, 0.14) !important;
+  border-top: 1px solid rgba(56, 189, 248, 0.5) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.5) !important;
+}
+
+.monthly-table tbody tr.tt-row.row-selected td.weekend-col {
+  background-color: rgba(14, 165, 233, 0.22) !important;
+}
+
+.monthly-table tbody tr.tt-row.row-selected td.sticky-col,
+.timetable-table tbody tr.tt-row.row-selected td.sticky-col {
+  background-color: #0c4a6e !important;
+  color: #f0f9ff !important;
+  border-left: 4px solid #38bdf8 !important;
+  box-shadow: 2px 0 10px rgba(56, 189, 248, 0.25);
+}
+
+.monthly-table tbody tr.tt-row.row-selected td.sticky-col strong,
+.timetable-table tbody tr.tt-row.row-selected td.sticky-col strong {
+  color: #38bdf8 !important;
+}
+
+.monthly-table tbody tr.tt-row.row-selected td.sticky-col div,
+.timetable-table tbody tr.tt-row.row-selected td.sticky-col div {
+  color: #bae6fd !important;
+}
+
+.monthly-table tbody tr.tt-row.row-selected .m-cell-empty {
+  color: #38bdf8;
+  font-weight: 800;
+}
+
+/* Selected / Active Row - Lit Up (Light Theme) */
+body.theme-light .monthly-table tbody tr.tt-row.row-selected td,
+body.theme-light .timetable-table tbody tr.tt-row.row-selected td {
+  background-color: #e0f2fe !important;
+  border-top: 1px solid #38bdf8 !important;
+  border-bottom: 1px solid #38bdf8 !important;
+}
+
+body.theme-light .monthly-table tbody tr.tt-row.row-selected td.weekend-col {
+  background-color: #bae6fd !important;
+}
+
+body.theme-light .monthly-table tbody tr.tt-row.row-selected td.sticky-col,
+body.theme-light .timetable-table tbody tr.tt-row.row-selected td.sticky-col {
+  background-color: #e0f2fe !important;
+  border-left: 4px solid #0284c7 !important;
+  box-shadow: 2px 0 8px rgba(2, 132, 199, 0.2);
+}
+
+body.theme-light .monthly-table tbody tr.tt-row.row-selected td.sticky-col strong,
+body.theme-light .timetable-table tbody tr.tt-row.row-selected td.sticky-col strong {
+  color: #0369a1 !important;
+}
+
+body.theme-light .monthly-table tbody tr.tt-row.row-selected td.sticky-col div,
+body.theme-light .timetable-table tbody tr.tt-row.row-selected td.sticky-col div {
+  color: #0284c7 !important;
+}
+

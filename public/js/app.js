@@ -362,6 +362,7 @@ class PulseHRApp {
         this.selectedCells = new Set();
         this.lastSelectedCell = null;
         this.focusedCell = null;
+        this.selectedRowEmpId = null;
         this.currentTheme = localStorage.getItem('pulsehr_theme') || 'dark';
         this.sidebarCollapsed = localStorage.getItem('pulsehr_sidebar_collapsed') === 'true';
         this.currentLang = localStorage.getItem('pulsehr_lang') || 'en';
@@ -1682,8 +1683,8 @@ class PulseHRApp {
             grandTotalHours += monthlyTotalHours;
             grandTotalPay += rowPay;
             return `
-          <tr>
-            <td class="sticky-col">
+          <tr data-row-emp="${emp.id}" class="tt-row ${this.selectedRowEmpId === emp.id ? 'row-selected' : ''}">
+            <td class="sticky-col" data-select-row="${emp.id}" style="cursor:pointer" title="Click to highlight ${emp.firstName} ${emp.lastName}">
               <strong>${emp.firstName} ${emp.lastName}</strong>
               <div style="font-size:0.66rem;color:#94a3b8">${emp.employeeCode} • ${this.formatDuration(monthlyTotalHours)}</div>
             </td>
@@ -1720,6 +1721,26 @@ class PulseHRApp {
           </tfoot>
         </table>
       `;
+            container.querySelectorAll('[data-select-row]').forEach((td) => {
+                td.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const empId = Number(td.getAttribute('data-select-row'));
+                    if (this.selectedRowEmpId === empId) {
+                        this.highlightRow(null);
+                    }
+                    else {
+                        this.highlightRow(empId);
+                    }
+                });
+            });
+            container.querySelectorAll('tr[data-row-emp]').forEach((tr) => {
+                tr.addEventListener('click', () => {
+                    const empId = Number(tr.getAttribute('data-row-emp'));
+                    if (empId && this.selectedRowEmpId !== empId) {
+                        this.highlightRow(empId);
+                    }
+                });
+            });
             container.querySelectorAll('.m-cell').forEach((cell) => {
                 cell.addEventListener('click', (e) => {
                     const empId = Number(cell.getAttribute('data-emp'));
@@ -1815,8 +1836,8 @@ class PulseHRApp {
                     ? '#fbbf24'
                     : '#94a3b8';
             return `
-          <tr>
-            <td>
+          <tr data-row-emp="${emp.id}" class="tt-row ${this.selectedRowEmpId === emp.id ? 'row-selected' : ''}">
+            <td class="sticky-col" data-select-row="${emp.id}" style="cursor:pointer" title="Click to highlight ${emp.firstName} ${emp.lastName}">
               <strong>${emp.firstName} ${emp.lastName}</strong>
               <div style="font-size:0.68rem;color:${diffColor};font-weight:600">
                 ${this.formatDuration(weeklyTotal)} / ${this.formatDuration(emp.weeklyTargetHours)}
@@ -1836,7 +1857,7 @@ class PulseHRApp {
         <table class="data-table timetable-table">
           <thead>
             <tr>
-              <th style="min-width:155px">Employee</th>
+              <th class="sticky-col" style="min-width:155px">${this.t('th_employee', 'Employee')}</th>
               ${headerCells}
               <th>Week Total</th>
               <th>Price / Hr</th>
@@ -1846,7 +1867,7 @@ class PulseHRApp {
           <tbody>${bodyRows}</tbody>
           <tfoot>
             <tr class="tfoot-totals">
-              <td>Grand Total (${filteredEmps.length} staff)</td>
+              <td class="sticky-col">Grand Total (${filteredEmps.length} staff)</td>
               <td colspan="7"></td>
               <td>${this.formatDuration(grandTotalHours)}</td>
               <td>—</td>
@@ -1855,6 +1876,26 @@ class PulseHRApp {
           </tfoot>
         </table>
       `;
+            container.querySelectorAll('[data-select-row]').forEach((td) => {
+                td.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const empId = Number(td.getAttribute('data-select-row'));
+                    if (this.selectedRowEmpId === empId) {
+                        this.highlightRow(null);
+                    }
+                    else {
+                        this.highlightRow(empId);
+                    }
+                });
+            });
+            container.querySelectorAll('tr[data-row-emp]').forEach((tr) => {
+                tr.addEventListener('click', () => {
+                    const empId = Number(tr.getAttribute('data-row-emp'));
+                    if (empId && this.selectedRowEmpId !== empId) {
+                        this.highlightRow(empId);
+                    }
+                });
+            });
             container.querySelectorAll('.tt-cell').forEach((cell) => {
                 cell.addEventListener('click', (e) => {
                     const empId = Number(cell.getAttribute('data-emp'));
@@ -2345,7 +2386,19 @@ class PulseHRApp {
             }
         });
     }
+    highlightRow(empId) {
+        this.selectedRowEmpId = empId;
+        document.querySelectorAll('.row-selected').forEach((r) => r.classList.remove('row-selected'));
+        if (empId !== null) {
+            document.querySelectorAll(`tr[data-row-emp="${empId}"]`).forEach((r) => {
+                r.classList.add('row-selected');
+            });
+        }
+    }
     restoreCellFocus() {
+        if (this.selectedRowEmpId !== null) {
+            this.highlightRow(this.selectedRowEmpId);
+        }
         if (!this.focusedCell)
             return;
         const { empId, dateStr } = this.focusedCell;
@@ -2358,6 +2411,7 @@ class PulseHRApp {
     }
     focusCell(empId, dateStr, scroll = true) {
         this.focusedCell = { empId, dateStr };
+        this.highlightRow(empId);
         document.querySelectorAll('.active-focus').forEach((c) => c.classList.remove('active-focus'));
         const selector = `[data-emp="${empId}"][data-date="${dateStr}"]`;
         const el = document.querySelector(selector);
