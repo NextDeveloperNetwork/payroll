@@ -20,7 +20,8 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 function calculateHours(clockIn: string, clockOut: string, breakMinutes: number) {
@@ -754,6 +755,16 @@ app.post('/api/employees', requireAdmin, async (req: Request, res: Response) => 
         weeklyTargetHours: Number(body.weeklyTargetHours || 40),
         bankAccount: body.bankAccount || null,
         taxRatePercent: String(body.taxRatePercent || '15.00'),
+        gender: body.gender || null,
+        dateOfBirth: body.dateOfBirth || null,
+        idNumber: body.idNumber || null,
+        idPhoto: body.idPhoto || null,
+        docMedicalReport: Boolean(body.docMedicalReport),
+        docMedicalChart: Boolean(body.docMedicalChart),
+        docWorkContract: Boolean(body.docWorkContract),
+        docWorkBook: Boolean(body.docWorkBook),
+        docDeclaration: Boolean(body.docDeclaration),
+        docTraining: Boolean(body.docTraining),
       })
       .returning();
 
@@ -835,6 +846,9 @@ app.post('/api/employees/bulk-import', requireAdmin, async (req: Request, res: R
           weeklyTargetHours: Number(r.weeklyTargetHours || 40),
           bankAccount: r.bankAccount ? String(r.bankAccount).trim() : null,
           taxRatePercent: String(Number(r.taxRatePercent || 15).toFixed(2)),
+          gender: r.gender ? String(r.gender).trim() : null,
+          dateOfBirth: r.dateOfBirth ? String(r.dateOfBirth).trim() : null,
+          idNumber: r.idNumber ? String(r.idNumber).trim() : null,
         })
         .returning();
 
@@ -892,6 +906,37 @@ app.put('/api/employees/:id', requireAdmin, async (req: Request, res: Response) 
         bankAccount:
           body.bankAccount !== undefined ? body.bankAccount || null : existingEmp?.bankAccount ?? null,
         taxRatePercent: String(body.taxRatePercent || existingEmp?.taxRatePercent || '15.00'),
+        gender: body.gender !== undefined ? body.gender || null : existingEmp?.gender ?? null,
+        dateOfBirth:
+          body.dateOfBirth !== undefined ? body.dateOfBirth || null : existingEmp?.dateOfBirth ?? null,
+        idNumber:
+          body.idNumber !== undefined ? body.idNumber || null : existingEmp?.idNumber ?? null,
+        idPhoto:
+          body.idPhoto !== undefined ? body.idPhoto || null : existingEmp?.idPhoto ?? null,
+        docMedicalReport:
+          body.docMedicalReport !== undefined
+            ? Boolean(body.docMedicalReport)
+            : (existingEmp?.docMedicalReport ?? false),
+        docMedicalChart:
+          body.docMedicalChart !== undefined
+            ? Boolean(body.docMedicalChart)
+            : (existingEmp?.docMedicalChart ?? false),
+        docWorkContract:
+          body.docWorkContract !== undefined
+            ? Boolean(body.docWorkContract)
+            : (existingEmp?.docWorkContract ?? false),
+        docWorkBook:
+          body.docWorkBook !== undefined
+            ? Boolean(body.docWorkBook)
+            : (existingEmp?.docWorkBook ?? false),
+        docDeclaration:
+          body.docDeclaration !== undefined
+            ? Boolean(body.docDeclaration)
+            : (existingEmp?.docDeclaration ?? false),
+        docTraining:
+          body.docTraining !== undefined
+            ? Boolean(body.docTraining)
+            : (existingEmp?.docTraining ?? false),
       })
       .where(eq(employees.id, id))
       .returning();
@@ -910,6 +955,36 @@ app.put('/api/employees/:id', requireAdmin, async (req: Request, res: Response) 
     res.json(updated);
   } catch (err: any) {
     res.status(400).json({ error: err.message || 'Failed to update employee' });
+  }
+});
+
+app.patch('/api/employees/:id/documents', requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    const body = req.body;
+    const [existingEmp] = await db.select().from(employees).where(eq(employees.id, id));
+    if (!existingEmp) {
+      res.status(404).json({ error: 'Employee not found' });
+      return;
+    }
+
+    const updates: Record<string, any> = {};
+    if (body.docMedicalReport !== undefined) updates.docMedicalReport = Boolean(body.docMedicalReport);
+    if (body.docMedicalChart !== undefined) updates.docMedicalChart = Boolean(body.docMedicalChart);
+    if (body.docWorkContract !== undefined) updates.docWorkContract = Boolean(body.docWorkContract);
+    if (body.docWorkBook !== undefined) updates.docWorkBook = Boolean(body.docWorkBook);
+    if (body.docDeclaration !== undefined) updates.docDeclaration = Boolean(body.docDeclaration);
+    if (body.docTraining !== undefined) updates.docTraining = Boolean(body.docTraining);
+
+    const [updated] = await db
+      .update(employees)
+      .set(updates)
+      .where(eq(employees.id, id))
+      .returning();
+
+    res.json(updated);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message || 'Failed to update documents' });
   }
 });
 

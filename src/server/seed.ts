@@ -46,6 +46,16 @@ export async function ensureSchemaAndSeed(): Promise<void> {
       weekly_target_hours INTEGER NOT NULL DEFAULT 40,
       bank_account VARCHAR(80),
       tax_rate_percent NUMERIC(5, 2) NOT NULL DEFAULT 15.00,
+      gender VARCHAR(20),
+      date_of_birth DATE,
+      id_number VARCHAR(50),
+      id_photo TEXT,
+      doc_medical_report BOOLEAN NOT NULL DEFAULT FALSE,
+      doc_medical_chart BOOLEAN NOT NULL DEFAULT FALSE,
+      doc_work_contract BOOLEAN NOT NULL DEFAULT FALSE,
+      doc_work_book BOOLEAN NOT NULL DEFAULT FALSE,
+      doc_declaration BOOLEAN NOT NULL DEFAULT FALSE,
+      doc_training BOOLEAN NOT NULL DEFAULT FALSE,
       created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -155,6 +165,17 @@ export async function ensureSchemaAndSeed(): Promise<void> {
     ALTER TABLE payrolls ADD COLUMN IF NOT EXISTS social_security_amount NUMERIC(12, 2) NOT NULL DEFAULT 0.00;
     ALTER TABLE payrolls ADD COLUMN IF NOT EXISTS medical_security_amount NUMERIC(12, 2) NOT NULL DEFAULT 0.00;
     ALTER TABLE payrolls ADD COLUMN IF NOT EXISTS income_tax_amount NUMERIC(12, 2) NOT NULL DEFAULT 0.00;
+
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS gender VARCHAR(20);
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS date_of_birth DATE;
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS id_number VARCHAR(50);
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS id_photo TEXT;
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS doc_medical_report BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS doc_medical_chart BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS doc_work_contract BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS doc_work_book BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS doc_declaration BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE employees ADD COLUMN IF NOT EXISTS doc_training BOOLEAN NOT NULL DEFAULT FALSE;
 
     CREATE TABLE IF NOT EXISTS salary_history (
       id SERIAL PRIMARY KEY,

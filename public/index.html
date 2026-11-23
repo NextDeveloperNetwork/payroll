@@ -415,17 +415,62 @@
 
       <!-- TAB 5: EMPLOYEES DIRECTORY -->
       <section id="tab-employees" class="tab-panel">
-        <div class="toolbar card">
-          <div class="toolbar-group">
-            <input type="text" id="emp-search" class="input-control input-sm"
-              placeholder="Search employ number, name, surname, bank..." />
-            <select id="emp-status-filter" class="input-select input-sm">
+        <div class="toolbar card" style="flex-wrap:wrap;gap:0.5rem">
+          <div class="toolbar-group" style="flex-wrap:wrap;gap:0.4rem;flex:1">
+            <input type="text" id="emp-search" class="input-control input-sm" style="min-width:190px"
+              placeholder="Search code, name, ID, bank, email..." />
+            <select id="emp-status-filter" class="input-select input-sm" title="Filter by Status">
               <option value="">All Statuses</option>
               <option value="Employed">Employed</option>
               <option value="Provisory">Provisory</option>
               <option value="Active">Active</option>
               <option value="Terminated">Terminated</option>
             </select>
+            <select id="emp-gender-filter" class="input-select input-sm" title="Filter by Gender">
+              <option value="">All Genders</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+              <option value="unset">Unset Gender</option>
+            </select>
+            <select id="emp-paytype-filter" class="input-select input-sm" title="Filter by Pay Type">
+              <option value="">All Pay Types</option>
+              <option value="base">Base Salary</option>
+              <option value="hourly">Hourly Rate</option>
+            </select>
+            <select id="emp-profile-filter" class="input-select input-sm" title="Filter by Photo & ID">
+              <option value="">Photo &amp; ID: All</option>
+              <option value="has_photo">Has ID Photo</option>
+              <option value="no_photo">Missing ID Photo</option>
+              <option value="has_id">Has ID Number</option>
+              <option value="no_id">Missing ID Number</option>
+              <option value="no_bank">Missing Bank IBAN</option>
+              <option value="no_dob">Missing Birth Date</option>
+            </select>
+            <select id="emp-doc-filter" class="input-select input-sm" title="Filter by Documents">
+              <option value="">Documents: All</option>
+              <option value="complete">✓ All 6 Docs Complete (100%)</option>
+              <option value="incomplete">⚠ Any Document Missing</option>
+              <option value="none">✗ No Documents (0/6)</option>
+              <optgroup label="Missing Specific Document (✗)">
+                <option value="missing:docMedicalReport">✗ Missing Medical Report</option>
+                <option value="missing:docMedicalChart">✗ Missing Medical Chart</option>
+                <option value="missing:docWorkContract">✗ Missing Work Contract</option>
+                <option value="missing:docWorkBook">✗ Missing Work Chart (Librezë)</option>
+                <option value="missing:docDeclaration">✗ Missing Declaration</option>
+                <option value="missing:docTraining">✗ Missing Training</option>
+              </optgroup>
+              <optgroup label="Has Specific Document (✓)">
+                <option value="has:docMedicalReport">✓ Has Medical Report</option>
+                <option value="has:docMedicalChart">✓ Has Medical Chart</option>
+                <option value="has:docWorkContract">✓ Has Work Contract</option>
+                <option value="has:docWorkBook">✓ Has Work Chart (Librezë)</option>
+                <option value="has:docDeclaration">✓ Has Declaration</option>
+                <option value="has:docTraining">✓ Has Training</option>
+              </optgroup>
+            </select>
+            <button type="button" class="btn btn-secondary btn-xs" id="btn-reset-emp-filters" title="Reset all filters">↺ Reset</button>
+            <span id="emp-filter-count" class="emp-filter-count-badge"></span>
           </div>
           <div class="toolbar-group">
             <button class="btn btn-secondary btn-xs" id="btn-sample-emp-csv">⬇ Sample CSV</button>
@@ -463,18 +508,28 @@
         </form>
 
         <div class="card table-wrap">
-          <table class="data-table">
+          <table class="data-table table-compact-emp">
             <thead>
               <tr>
                 <th data-i18n="th_date">Date</th>
-                <th data-i18n="th_emp_code">Employ Number</th>
+                <th data-i18n="th_emp_code">Code</th>
+                <th style="text-align:center" data-i18n="th_id_photo">Photo</th>
                 <th data-i18n="th_name">Name</th>
                 <th data-i18n="th_surname">Surname</th>
-                <th data-i18n="th_bank_num">Bank Number</th>
+                <th style="text-align:center" data-i18n="th_gender">Gender</th>
+                <th data-i18n="th_dob">DOB</th>
+                <th data-i18n="th_id_number">ID No.</th>
+                <th data-i18n="th_bank_num">Bank</th>
                 <th data-i18n="th_status">Status</th>
-                <th data-i18n="th_base_salary">Base Salary (click to edit)</th>
-                <th data-i18n="th_base_rate">Hourly Rate (click to edit)</th>
-                <th data-i18n="th_actions">Actions</th>
+                <th data-i18n="th_base_salary">Base Salary</th>
+                <th data-i18n="th_base_rate">Rate/Hr</th>
+                <th class="th-doc" title="Medical Report" data-i18n-title="doc_med_report">Med</th>
+                <th class="th-doc" title="Medical Chart" data-i18n-title="doc_med_chart">Chart</th>
+                <th class="th-doc" title="Work Contract" data-i18n-title="doc_work_contract">Contr</th>
+                <th class="th-doc" title="Work Chart (Librezë Pune)" data-i18n-title="doc_work_book">Librezë</th>
+                <th class="th-doc" title="Declaration" data-i18n-title="doc_declaration">Decl</th>
+                <th class="th-doc" title="Training" data-i18n-title="doc_training">Train</th>
+                <th style="text-align:right" data-i18n="th_actions">Actions</th>
               </tr>
             </thead>
             <tbody id="employees-tbody"></tbody>
@@ -707,6 +762,18 @@
           <input type="text" id="emp-last-name" required />
         </div>
         <div class="form-field">
+          <label>Email</label>
+          <input type="email" id="emp-email" placeholder="employee@company.io" />
+        </div>
+        <div class="form-field">
+          <label>Phone</label>
+          <input type="text" id="emp-phone" placeholder="+355 69 ..." />
+        </div>
+        <div class="form-field">
+          <label>Position</label>
+          <input type="text" id="emp-position" placeholder="e.g. Staff" value="Staff" />
+        </div>
+        <div class="form-field">
           <label>Bank Number</label>
           <input type="text" id="emp-bank" />
         </div>
@@ -733,11 +800,118 @@
           <label>Hourly Rate Change Reason (if edited)</label>
           <input type="text" id="emp-salary-reason" placeholder="e.g. Annual raise, Promotion..." />
         </div>
+        <div class="form-field full-width">
+          <label>ID Photo</label>
+          <div class="emp-photo-upload-row">
+            <div id="emp-photo-preview-wrap" class="emp-photo-preview-box">
+              <span id="emp-photo-placeholder">No Photo</span>
+              <img id="emp-photo-img" src="" alt="Preview" class="hidden" />
+            </div>
+            <div class="emp-photo-upload-actions">
+              <input type="file" id="emp-photo-file" accept="image/*" class="hidden" />
+              <button type="button" class="btn btn-secondary btn-xs" id="btn-upload-photo">📷 Choose Photo...</button>
+              <button type="button" class="btn btn-secondary btn-xs text-danger hidden" id="btn-remove-photo">Remove Photo</button>
+              <input type="hidden" id="emp-photo-val" />
+              <div style="font-size:0.72rem;color:#94a3b8;margin-top:0.25rem">Supports JPG, PNG, WebP</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Gender</label>
+          <select id="emp-gender">
+            <option value="">— Select —</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Date of Birth</label>
+          <input type="date" id="emp-dob" />
+        </div>
+        <div class="form-field">
+          <label>ID Number</label>
+          <input type="text" id="emp-id-number" placeholder="e.g. I81023055A" />
+        </div>
+        <div class="form-field full-width">
+          <label style="margin-bottom:0.4rem;font-weight:600">Document Checkboxes</label>
+          <div class="doc-checkbox-grid">
+            <label class="doc-check-item">
+              <input type="checkbox" id="emp-doc-med-report" />
+              <span>Medical report</span>
+            </label>
+            <label class="doc-check-item">
+              <input type="checkbox" id="emp-doc-med-chart" />
+              <span>Medical chart</span>
+            </label>
+            <label class="doc-check-item">
+              <input type="checkbox" id="emp-doc-contract" />
+              <span>Work contract</span>
+            </label>
+            <label class="doc-check-item">
+              <input type="checkbox" id="emp-doc-workbook" />
+              <span>Work chart (librezë pune)</span>
+            </label>
+            <label class="doc-check-item">
+              <input type="checkbox" id="emp-doc-declaration" />
+              <span>Declaration</span>
+            </label>
+            <label class="doc-check-item">
+              <input type="checkbox" id="emp-doc-training" />
+              <span>Training</span>
+            </label>
+          </div>
+        </div>
         <div class="modal-footer full-width">
           <button type="button" class="btn btn-secondary btn-sm" data-close="modal-employee">Cancel</button>
           <button type="submit" class="btn btn-primary btn-sm">Save</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL: WORKER CHART / KARTELA E PUNËTORIT -->
+  <div id="modal-worker-chart" class="modal-backdrop hidden">
+    <div class="modal-box modal-lg worker-chart-modal-box">
+      <div class="modal-header wc-modal-header">
+        <div class="wc-modal-title-wrap">
+          <span class="wc-modal-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="M12 11h4"></path>
+              <path d="M12 16h4"></path>
+              <path d="M8 11h.01"></path>
+              <path d="M8 16h.01"></path>
+            </svg>
+          </span>
+          <div>
+            <h3 id="worker-chart-title">Worker Chart — Kartela e Punëtorit</h3>
+            <span class="wc-modal-subtitle">Official Employee Dossier &amp; Compliance Record</span>
+          </div>
+        </div>
+        <div class="toolbar-group">
+          <button type="button" class="btn btn-secondary btn-xs admin-only" id="btn-wc-edit-emp">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Edit Dossier
+          </button>
+          <button type="button" class="btn btn-primary btn-xs" id="btn-print-worker-chart">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Print / PDF
+          </button>
+          <button class="modal-close" data-close="modal-worker-chart">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body worker-chart-modal-body" id="worker-chart-body">
+        <!-- Content dynamically generated by app.ts -->
+      </div>
     </div>
   </div>
 

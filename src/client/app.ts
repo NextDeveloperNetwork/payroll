@@ -16,6 +16,16 @@ interface Employee {
   weeklyTargetHours: number;
   bankAccount: string | null;
   taxRatePercent: string;
+  gender?: string | null;
+  dateOfBirth?: string | null;
+  idNumber?: string | null;
+  idPhoto?: string | null;
+  docMedicalReport?: boolean;
+  docMedicalChart?: boolean;
+  docWorkContract?: boolean;
+  docWorkBook?: boolean;
+  docDeclaration?: boolean;
+  docTraining?: boolean;
 }
 
 interface WorkSchedule {
@@ -194,6 +204,18 @@ const I18N: Record<Language, Record<string, string>> = {
     btn_apply_sel: 'Apply to Selected',
     th_employee: 'Employee',
     th_emp_code: 'Employ #',
+    th_id_photo: 'Photo',
+    th_gender: 'Gender',
+    th_dob: 'Date of Birth',
+    th_id_number: 'ID Number',
+    th_worker_chart: 'Worker Chart',
+    doc_med_report: 'Medical Report',
+    doc_med_chart: 'Medical Chart',
+    doc_work_contract: 'Work Contract',
+    doc_work_book: 'Work Chart (Librezë Pune)',
+    doc_declaration: 'Declaration',
+    doc_training: 'Training',
+    btn_worker_chart: '📋 Worker Chart',
     th_name: 'Name',
     th_surname: 'Surname',
     th_bank_num: 'Bank Number',
@@ -304,6 +326,18 @@ const I18N: Record<Language, Record<string, string>> = {
     btn_apply_sel: 'Apliko tek të Zgjedhurat',
     th_employee: 'Punonjësi',
     th_emp_code: 'Nr. Punonjësit',
+    th_id_photo: 'Foto',
+    th_gender: 'Gjinia',
+    th_dob: 'Datëlindja',
+    th_id_number: 'Nr. Identifikimit (ID)',
+    th_worker_chart: 'Kartela e Punëtorit',
+    doc_med_report: 'Raport Mjekësor',
+    doc_med_chart: 'Kartelë Mjekësore',
+    doc_work_contract: 'Kontratë Pune',
+    doc_work_book: 'Librezë Pune',
+    doc_declaration: 'Deklaratë',
+    doc_training: 'Trajnim',
+    btn_worker_chart: '📋 Kartela e Punëtorit',
     th_name: 'Emri',
     th_surname: 'Mbiemri',
     th_bank_num: 'Nr. Llogarisë Bankare',
@@ -414,6 +448,18 @@ const I18N: Record<Language, Record<string, string>> = {
     btn_apply_sel: 'Applica a Selezionate',
     th_employee: 'Dipendente',
     th_emp_code: 'N. Dipendente',
+    th_id_photo: 'Foto',
+    th_gender: 'Genere',
+    th_dob: 'Data di Nascita',
+    th_id_number: 'Codice Fiscale / ID',
+    th_worker_chart: 'Scheda Dipendente',
+    doc_med_report: 'Referto Medico',
+    doc_med_chart: 'Cartella Clinica',
+    doc_work_contract: 'Contratto di Lavoro',
+    doc_work_book: 'Libretto di Lavoro',
+    doc_declaration: 'Dichiarazione',
+    doc_training: 'Formazione',
+    btn_worker_chart: '📋 Scheda Dipendente',
     th_name: 'Nome',
     th_surname: 'Cognome',
     th_bank_num: 'Numero di Conto Bancario',
@@ -1208,6 +1254,31 @@ class PulseHRApp {
       (document.getElementById('emp-id') as HTMLInputElement).value = '';
       (document.getElementById('emp-code') as HTMLInputElement).value = `EMP-${1001 + this.employees.length}`;
       (document.getElementById('emp-hire-date') as HTMLInputElement).value = today;
+      const photoVal = document.getElementById('emp-photo-val') as HTMLInputElement | null;
+      if (photoVal) photoVal.value = '';
+      const photoImg = document.getElementById('emp-photo-img') as HTMLImageElement | null;
+      if (photoImg) {
+        photoImg.src = '';
+        photoImg.classList.add('hidden');
+      }
+      document.getElementById('emp-photo-placeholder')?.classList.remove('hidden');
+      document.getElementById('btn-remove-photo')?.classList.add('hidden');
+      const genderEl = document.getElementById('emp-gender') as HTMLSelectElement | null;
+      if (genderEl) genderEl.value = '';
+      const dobEl = document.getElementById('emp-dob') as HTMLInputElement | null;
+      if (dobEl) dobEl.value = '';
+      const idNumEl = document.getElementById('emp-id-number') as HTMLInputElement | null;
+      if (idNumEl) idNumEl.value = '';
+      const emailEl = document.getElementById('emp-email') as HTMLInputElement | null;
+      if (emailEl) emailEl.value = '';
+      const phoneEl = document.getElementById('emp-phone') as HTMLInputElement | null;
+      if (phoneEl) phoneEl.value = '';
+      const posEl = document.getElementById('emp-position') as HTMLInputElement | null;
+      if (posEl) posEl.value = 'Staff';
+      ['emp-doc-med-report', 'emp-doc-med-chart', 'emp-doc-contract', 'emp-doc-workbook', 'emp-doc-declaration', 'emp-doc-training'].forEach((id) => {
+        const chk = document.getElementById(id) as HTMLInputElement | null;
+        if (chk) chk.checked = false;
+      });
       const title = document.getElementById('modal-emp-title');
       if (title) title.textContent = 'Add New Employee';
       this.openModal('modal-employee');
@@ -1215,6 +1286,53 @@ class PulseHRApp {
 
     document.getElementById('btn-quick-employee')?.addEventListener('click', openNewEmp);
     document.getElementById('btn-open-emp-modal')?.addEventListener('click', openNewEmp);
+
+    document.getElementById('btn-upload-photo')?.addEventListener('click', () => {
+      document.getElementById('emp-photo-file')?.click();
+    });
+
+    document.getElementById('emp-photo-file')?.addEventListener('change', (e) => {
+      const input = e.target as HTMLInputElement;
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.size > 5 * 1024 * 1024) {
+          this.toast('Image size must be less than 5MB');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (re) => {
+          const dataUrl = re.target?.result as string;
+          const photoVal = document.getElementById('emp-photo-val') as HTMLInputElement | null;
+          if (photoVal) photoVal.value = dataUrl;
+          const photoImg = document.getElementById('emp-photo-img') as HTMLImageElement | null;
+          if (photoImg) {
+            photoImg.src = dataUrl;
+            photoImg.classList.remove('hidden');
+          }
+          document.getElementById('emp-photo-placeholder')?.classList.add('hidden');
+          document.getElementById('btn-remove-photo')?.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('btn-remove-photo')?.addEventListener('click', () => {
+      const fileInput = document.getElementById('emp-photo-file') as HTMLInputElement | null;
+      if (fileInput) fileInput.value = '';
+      const photoVal = document.getElementById('emp-photo-val') as HTMLInputElement | null;
+      if (photoVal) photoVal.value = '';
+      const photoImg = document.getElementById('emp-photo-img') as HTMLImageElement | null;
+      if (photoImg) {
+        photoImg.src = '';
+        photoImg.classList.add('hidden');
+      }
+      document.getElementById('emp-photo-placeholder')?.classList.remove('hidden');
+      document.getElementById('btn-remove-photo')?.classList.add('hidden');
+    });
+
+    document.getElementById('btn-print-worker-chart')?.addEventListener('click', () => {
+      this.printWorkerChart(this.currentWorkerChartEmpId);
+    });
 
     const openNewAtt = () => {
       (document.getElementById('form-attendance') as HTMLFormElement).reset();
@@ -3307,15 +3425,81 @@ class PulseHRApp {
     const statusVal = (
       document.getElementById('emp-status-filter') as HTMLSelectElement | null
     )?.value;
+    const genderVal = (
+      document.getElementById('emp-gender-filter') as HTMLSelectElement | null
+    )?.value;
+    const payTypeVal = (
+      document.getElementById('emp-paytype-filter') as HTMLSelectElement | null
+    )?.value;
+    const profileVal = (
+      document.getElementById('emp-profile-filter') as HTMLSelectElement | null
+    )?.value;
+    const docVal = (
+      document.getElementById('emp-doc-filter') as HTMLSelectElement | null
+    )?.value;
 
     const list = this.employees.filter((e) => {
       if (statusVal && e.status !== statusVal) return false;
+
+      if (genderVal) {
+        if (genderVal === 'unset') {
+          if (e.gender) return false;
+        } else if (e.gender !== genderVal) {
+          return false;
+        }
+      }
+
+      if (payTypeVal) {
+        const baseNum = parseFloat(e.baseSalary || '0');
+        const hourlyNum = parseFloat(e.hourlyRate || '0');
+        if (payTypeVal === 'base' && baseNum <= 0) return false;
+        if (payTypeVal === 'hourly' && (hourlyNum <= 0 || baseNum > 0)) return false;
+      }
+
+      if (profileVal) {
+        if (profileVal === 'has_photo' && !e.idPhoto) return false;
+        if (profileVal === 'no_photo' && e.idPhoto) return false;
+        if (profileVal === 'has_id' && !e.idNumber) return false;
+        if (profileVal === 'no_id' && e.idNumber) return false;
+        if (profileVal === 'no_bank' && e.bankAccount) return false;
+        if (profileVal === 'no_dob' && e.dateOfBirth) return false;
+      }
+
+      if (docVal) {
+        const docKeys = [
+          'docMedicalReport',
+          'docMedicalChart',
+          'docWorkContract',
+          'docWorkBook',
+          'docDeclaration',
+          'docTraining',
+        ] as const;
+        const verifiedCount = docKeys.filter((k) => Boolean(e[k])).length;
+
+        if (docVal === 'complete' && verifiedCount < 6) return false;
+        if (docVal === 'incomplete' && verifiedCount === 6) return false;
+        if (docVal === 'none' && verifiedCount > 0) return false;
+        if (docVal.startsWith('missing:')) {
+          const key = docVal.split(':')[1] as keyof Employee;
+          if (Boolean(e[key])) return false;
+        }
+        if (docVal.startsWith('has:')) {
+          const key = docVal.split(':')[1] as keyof Employee;
+          if (!Boolean(e[key])) return false;
+        }
+      }
+
       if (searchVal) {
-        const hay = `${e.hireDate} ${e.employeeCode} ${e.firstName} ${e.lastName} ${e.bankAccount || ''} ${e.status}`.toLowerCase();
+        const hay = `${e.hireDate} ${e.employeeCode} ${e.firstName} ${e.lastName} ${e.gender || ''} ${e.dateOfBirth || ''} ${e.idNumber || ''} ${e.bankAccount || ''} ${e.email || ''} ${e.phone || ''} ${e.position || ''} ${e.status}`.toLowerCase();
         if (!hay.includes(searchVal)) return false;
       }
       return true;
     });
+
+    const countEl = document.getElementById('emp-filter-count');
+    if (countEl) {
+      countEl.textContent = `${list.length} / ${this.employees.length}`;
+    }
 
     const tbody = document.getElementById('employees-tbody');
     if (!tbody) return;
@@ -3326,30 +3510,86 @@ class PulseHRApp {
           const statusClass = e.status.replace(/\s+/g, '-');
           const baseNum = parseFloat(e.baseSalary || '0');
           const hourlyNum = parseFloat(e.hourlyRate || '0');
+          const initials = `${(e.firstName[0] || '').toUpperCase()}${(e.lastName[0] || '').toUpperCase()}`;
+          const isViewer = this.currentUser?.role === 'viewer';
+          const genderShort = e.gender === 'Male' ? 'M' : e.gender === 'Female' ? 'F' : (e.gender || '—');
           return `
             <tr>
               <td>${e.hireDate}</td>
               <td><strong>${e.employeeCode}</strong></td>
+              <td style="text-align:center">
+                ${
+                  e.idPhoto
+                    ? `<img src="${e.idPhoto}" class="emp-avatar-thumb" alt="${e.firstName}" />`
+                    : `<span class="emp-avatar-placeholder">${initials || '?'}</span>`
+                }
+              </td>
               <td><strong>${e.firstName}</strong></td>
               <td><strong>${e.lastName}</strong></td>
-              <td>${e.bankAccount || '—'}</td>
+              <td style="text-align:center" title="${e.gender || ''}">${genderShort}</td>
+              <td>${e.dateOfBirth ? e.dateOfBirth.split('T')[0] : '—'}</td>
+              <td><span style="font-family:monospace;font-size:0.72rem">${e.idNumber || '—'}</span></td>
+              <td><span class="emp-bank-cell" title="${e.bankAccount || ''}">${e.bankAccount || '—'}</span></td>
               <td><span class="badge badge-${statusClass}">${e.status}</span></td>
               <td class="rate-cell" data-base-emp="${e.id}" title="Click to edit base salary">${baseNum > 0 ? this.formatMoney(baseNum) : '—'}</td>
               <td class="rate-cell" data-hourly-emp="${e.id}" title="Click to edit hourly rate">${hourlyNum > 0 ? `${this.formatMoney(hourlyNum)}/h` : '—'}</td>
-              <td>
-                <div class="toolbar-group">
+              <td class="doc-chk-cell" title="Medical Report">
+                <input type="checkbox" class="doc-chk-input" data-doc-toggle="docMedicalReport" data-doc-emp="${e.id}" ${e.docMedicalReport ? 'checked' : ''} ${isViewer ? 'disabled' : ''} />
+              </td>
+              <td class="doc-chk-cell" title="Medical Chart">
+                <input type="checkbox" class="doc-chk-input" data-doc-toggle="docMedicalChart" data-doc-emp="${e.id}" ${e.docMedicalChart ? 'checked' : ''} ${isViewer ? 'disabled' : ''} />
+              </td>
+              <td class="doc-chk-cell" title="Work Contract">
+                <input type="checkbox" class="doc-chk-input" data-doc-toggle="docWorkContract" data-doc-emp="${e.id}" ${e.docWorkContract ? 'checked' : ''} ${isViewer ? 'disabled' : ''} />
+              </td>
+              <td class="doc-chk-cell" title="Work Chart (Librezë Pune)">
+                <input type="checkbox" class="doc-chk-input" data-doc-toggle="docWorkBook" data-doc-emp="${e.id}" ${e.docWorkBook ? 'checked' : ''} ${isViewer ? 'disabled' : ''} />
+              </td>
+              <td class="doc-chk-cell" title="Declaration">
+                <input type="checkbox" class="doc-chk-input" data-doc-toggle="docDeclaration" data-doc-emp="${e.id}" ${e.docDeclaration ? 'checked' : ''} ${isViewer ? 'disabled' : ''} />
+              </td>
+              <td class="doc-chk-cell" title="Training">
+                <input type="checkbox" class="doc-chk-input" data-doc-toggle="docTraining" data-doc-emp="${e.id}" ${e.docTraining ? 'checked' : ''} ${isViewer ? 'disabled' : ''} />
+              </td>
+              <td style="text-align:right">
+                <div class="emp-actions">
+                  <button type="button" class="btn-action btn-action-chart" data-chart-emp="${e.id}" title="View Worker Chart">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    Chart
+                  </button>
                   ${
                     this.currentUser?.role === 'admin'
-                      ? `<button class="btn btn-xs btn-secondary" data-edit-emp="${e.id}">Edit</button>
-                         <button class="btn btn-xs btn-danger" data-del-emp="${e.id}">×</button>`
-                      : '<span style="color:#64748b">—</span>'
+                      ? `<button type="button" class="btn-action btn-action-edit" data-edit-emp="${e.id}" title="Edit Employee">Edit</button>
+                         <button type="button" class="btn-action btn-action-del" data-del-emp="${e.id}" title="Delete Employee">&times;</button>`
+                      : ''
                   }
                 </div>
               </td>
             </tr>
           `;
         })
-        .join('') || `<tr><td colspan="9">No employees match your filter</td></tr>`;
+        .join('') || `<tr><td colspan="19">No employees match your filter</td></tr>`;
+
+    tbody.querySelectorAll('[data-doc-toggle]').forEach((chk) => {
+      chk.addEventListener('change', (e) => {
+        const input = e.target as HTMLInputElement;
+        const docKey = input.getAttribute('data-doc-toggle') || '';
+        const empId = Number(input.getAttribute('data-doc-emp'));
+        this.toggleEmployeeDoc(empId, docKey, input.checked);
+      });
+    });
+
+    tbody.querySelectorAll('[data-chart-emp]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const empId = Number(btn.getAttribute('data-chart-emp'));
+        this.openWorkerChart(empId);
+      });
+    });
 
     tbody.querySelectorAll('[data-base-emp]').forEach((td) => {
       td.addEventListener('click', () => {
@@ -3378,6 +3618,49 @@ class PulseHRApp {
         (document.getElementById('emp-last-name') as HTMLInputElement).value = emp.lastName;
         (document.getElementById('emp-bank') as HTMLInputElement).value = emp.bankAccount || '';
         (document.getElementById('emp-status') as HTMLSelectElement).value = emp.status;
+
+        const emailEl = document.getElementById('emp-email') as HTMLInputElement | null;
+        if (emailEl) emailEl.value = emp.email || '';
+        const phoneEl = document.getElementById('emp-phone') as HTMLInputElement | null;
+        if (phoneEl) phoneEl.value = emp.phone || '';
+        const posEl = document.getElementById('emp-position') as HTMLInputElement | null;
+        if (posEl) posEl.value = emp.position || 'Staff';
+
+        const genderEl = document.getElementById('emp-gender') as HTMLSelectElement | null;
+        if (genderEl) genderEl.value = emp.gender || '';
+        const dobEl = document.getElementById('emp-dob') as HTMLInputElement | null;
+        if (dobEl) dobEl.value = emp.dateOfBirth ? emp.dateOfBirth.split('T')[0] : '';
+        const idNumEl = document.getElementById('emp-id-number') as HTMLInputElement | null;
+        if (idNumEl) idNumEl.value = emp.idNumber || '';
+
+        const photoVal = document.getElementById('emp-photo-val') as HTMLInputElement | null;
+        if (photoVal) photoVal.value = emp.idPhoto || '';
+        const photoImg = document.getElementById('emp-photo-img') as HTMLImageElement | null;
+        const photoPlaceholder = document.getElementById('emp-photo-placeholder');
+        const btnRemovePhoto = document.getElementById('btn-remove-photo');
+        if (emp.idPhoto) {
+          if (photoImg) {
+            photoImg.src = emp.idPhoto;
+            photoImg.classList.remove('hidden');
+          }
+          if (photoPlaceholder) photoPlaceholder.classList.add('hidden');
+          if (btnRemovePhoto) btnRemovePhoto.classList.remove('hidden');
+        } else {
+          if (photoImg) {
+            photoImg.src = '';
+            photoImg.classList.add('hidden');
+          }
+          if (photoPlaceholder) photoPlaceholder.classList.remove('hidden');
+          if (btnRemovePhoto) btnRemovePhoto.classList.add('hidden');
+        }
+
+        (document.getElementById('emp-doc-med-report') as HTMLInputElement).checked = Boolean(emp.docMedicalReport);
+        (document.getElementById('emp-doc-med-chart') as HTMLInputElement).checked = Boolean(emp.docMedicalChart);
+        (document.getElementById('emp-doc-contract') as HTMLInputElement).checked = Boolean(emp.docWorkContract);
+        (document.getElementById('emp-doc-workbook') as HTMLInputElement).checked = Boolean(emp.docWorkBook);
+        (document.getElementById('emp-doc-declaration') as HTMLInputElement).checked = Boolean(emp.docDeclaration);
+        (document.getElementById('emp-doc-training') as HTMLInputElement).checked = Boolean(emp.docTraining);
+
         const baseNum = parseFloat(emp.baseSalary || '0');
         const hourlyNum = parseFloat(emp.hourlyRate || '0');
         const isHourly = hourlyNum > 0 && baseNum === 0;
@@ -3420,6 +3703,1117 @@ class PulseHRApp {
         this.openModal('modal-confirm-delete-emp');
       });
     });
+  }
+
+  private async toggleEmployeeDoc(empId: number, docKey: string, checked: boolean): Promise<void> {
+    if (this.currentUser?.role === 'viewer') return;
+    try {
+      await this.api(`/api/employees/${empId}/documents`, {
+        method: 'PATCH',
+        body: JSON.stringify({ [docKey]: checked }),
+      });
+      const emp = this.employees.find((x) => x.id === empId);
+      if (emp) {
+        (emp as any)[docKey] = checked;
+      }
+      this.toast(`Updated document status for ${emp ? emp.firstName : 'employee'}`);
+      this.renderEmployees();
+    } catch (err: any) {
+      this.toast(err.message || 'Failed to update document status');
+      this.renderEmployees();
+    }
+  }
+
+  private currentWorkerChartEmpId: number | null = null;
+  private isWorkerChartEditing = false;
+  private empChartSchedules: WorkSchedule[] = [];
+  private empChartLoadedId: number | null = null;
+
+  private openWorkerChart(empId: number, editMode = false): void {
+    const emp = this.employees.find((x) => x.id === empId);
+    if (!emp) return;
+    this.currentWorkerChartEmpId = emp.id;
+    this.isWorkerChartEditing = editMode;
+
+    // Fetch complete schedule history for this employee across all months if not yet loaded
+    if (this.empChartLoadedId !== empId) {
+      this.empChartLoadedId = empId;
+      this.api<WorkSchedule[]>(`/api/schedules?employeeId=${empId}`)
+        .then((allRows) => {
+          this.empChartSchedules = allRows;
+          if (this.currentWorkerChartEmpId === empId) {
+            this.renderWorkerChartContent(emp, this.isWorkerChartEditing);
+          }
+        })
+        .catch(() => {});
+    }
+
+    this.renderWorkerChartContent(emp, editMode);
+    this.openModal('modal-worker-chart');
+  }
+
+  private getEmployeeAllSchedules(empId: number): WorkSchedule[] {
+    if (this.empChartLoadedId === empId && this.empChartSchedules.length > 0) {
+      return this.empChartSchedules;
+    }
+    const map = new Map<number, WorkSchedule>();
+    this.schedules.filter((s) => s.employeeId === empId).forEach((s) => map.set(s.id, s));
+    this.timeLogRecords.filter((s) => s.employeeId === empId).forEach((s) => map.set(s.id, s));
+    return Array.from(map.values());
+  }
+
+  private renderWorkerChartContent(emp: Employee, editMode = false): void {
+    const titleEl = document.getElementById('worker-chart-title');
+    if (titleEl) {
+      titleEl.textContent = editMode
+        ? `Editing Worker Chart — ${emp.firstName} ${emp.lastName}`
+        : `${emp.firstName} ${emp.lastName} — Worker Chart (${emp.employeeCode})`;
+    }
+
+    const editBtn = document.getElementById('btn-wc-edit-emp');
+    if (editBtn) {
+      editBtn.innerHTML = editMode
+        ? `Cancel Edit`
+        : `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit Chart`;
+      editBtn.onclick = () => {
+        this.openWorkerChart(emp.id, !this.isWorkerChartEditing);
+      };
+    }
+
+    const bodyEl = document.getElementById('worker-chart-body');
+    if (!bodyEl) return;
+
+    const initials = `${(emp.firstName[0] || '').toUpperCase()}${(emp.lastName[0] || '').toUpperCase()}`;
+    const statusBadgeClass = emp.status.replace(/\s+/g, '-');
+    const avatarHtml = `
+      <div class="wc-avatar-frame">
+        ${
+          emp.idPhoto
+            ? `<img src="${emp.idPhoto}" id="wc-edit-photo-preview" class="wc-avatar" alt="${emp.firstName} ${emp.lastName}" />`
+            : `<div id="wc-edit-photo-placeholder" class="wc-avatar-placeholder"><span>${initials || '?'}</span></div>`
+        }
+        <span class="badge badge-${statusBadgeClass} wc-status-dot-badge">${emp.status}</span>
+      </div>
+      ${
+        editMode
+          ? `<div class="wc-avatar-edit-overlay">
+               <input type="file" id="wc-photo-file-input" accept="image/*" class="hidden" />
+               <input type="hidden" id="wc-photo-data-val" value="${emp.idPhoto || ''}" />
+               <button type="button" class="wc-copy-btn" id="btn-wc-change-photo">📷 Photo</button>
+               <button type="button" class="wc-copy-btn" id="btn-wc-clear-photo" style="color:#f87171;border-color:rgba(239,68,68,0.3)">✕</button>
+             </div>`
+          : ''
+      }
+    `;
+
+    const baseSal = parseFloat(emp.baseSalary || '0');
+    const hourlySal = parseFloat(emp.hourlyRate || '0');
+    const dobIso = emp.dateOfBirth ? String(emp.dateOfBirth).split('T')[0] : '';
+    const hireIso = emp.hireDate ? String(emp.hireDate).split('T')[0] : '';
+
+    // Calculate age
+    let ageStr = '—';
+    if (dobIso) {
+      const birth = new Date(dobIso);
+      const diff = Date.now() - birth.getTime();
+      const ageDate = new Date(diff);
+      const calculatedAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+      if (!isNaN(calculatedAge)) {
+        ageStr = `${calculatedAge} yrs`;
+      }
+    }
+
+    // Calculate tenure from hireDate
+    let tenureStr = 'New Hire';
+    if (hireIso) {
+      const hire = new Date(hireIso);
+      const now = new Date();
+      const totalMonths =
+        (now.getFullYear() - hire.getFullYear()) * 12 + (now.getMonth() - hire.getMonth());
+      if (totalMonths >= 12) {
+        const yrs = Math.floor(totalMonths / 12);
+        const mos = totalMonths % 12;
+        tenureStr = mos > 0 ? `${yrs}y ${mos}m` : `${yrs} yr${yrs > 1 ? 's' : ''}`;
+      } else if (totalMonths > 0) {
+        tenureStr = `${totalMonths} mo${totalMonths > 1 ? 's' : ''}`;
+      }
+    }
+
+    // Workhours, Attendance & Leave breakdown across ALL schedules for this employee
+    const empSchedules = this.getEmployeeAllSchedules(emp.id);
+    let workedHours = 0;
+    let presentDays = 0;
+    let leaveDays = 0;
+    let sickDays = 0;
+    let absentDays = 0;
+    let holidayDays = 0;
+    let currentMonthHours = 0;
+
+    empSchedules.forEach((s) => {
+      const hrs = parseFloat(s.plannedHours || '0');
+      const st = (s.shiftType || '').toLowerCase();
+      const ym = (s.workDate || '').slice(0, 7);
+      if (ym === this.currentMonth && st !== 'off' && st !== 'absence' && st !== 'absent') {
+        currentMonthHours += hrs;
+      }
+      if (st === 'leave' || st === 'vacation') {
+        leaveDays++;
+        workedHours += hrs;
+      } else if (st === 'sick' || st === 'raport') {
+        sickDays++;
+        workedHours += hrs;
+      } else if (st === 'holiday') {
+        holidayDays++;
+        workedHours += hrs;
+      } else if (st === 'absence' || st === 'absent') {
+        absentDays++;
+      } else if (st !== 'off' && hrs > 0) {
+        presentDays++;
+        workedHours += hrs;
+      }
+    });
+
+    // Also include attendanceLogs if schedules are empty
+    const empAtt = this.attendanceLogs.filter((a) => a.employeeId === emp.id);
+    if (empSchedules.length === 0 && empAtt.length > 0) {
+      empAtt.forEach((a) => {
+        const hrs = parseFloat(a.totalHours || '0');
+        workedHours += hrs;
+        if (a.status === 'Absent') absentDays++;
+        else presentDays++;
+      });
+    }
+
+    const avgHrsPerDay = presentDays > 0 ? (workedHours / presentDays).toFixed(1) : '0.0';
+
+    // Payroll & estimated current month earnings
+    const empPayrolls = this.payrolls.filter((p) => p.employeeId === emp.id);
+    const totalNetPaid = empPayrolls.reduce((sum, p) => sum + parseFloat(p.netSalary || '0'), 0);
+    const latestPayroll = empPayrolls[0];
+    const estimatedCurrentMonthPay =
+      baseSal > 0 ? baseSal : hourlySal > 0 ? currentMonthHours * hourlySal : 0;
+
+    // Salary / Hourly rate change history for this employee
+    const empSalaryHist = this.salaryHistory.filter((h) => h.employeeId === emp.id);
+    const latestSalChange = empSalaryHist[0];
+
+    // Last 6 months hours distribution for bar chart
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const [curY, curM] = (this.currentMonth || this.formatDateISO(new Date()).slice(0, 7))
+      .split('-')
+      .map(Number);
+    const refDt = new Date(curY || new Date().getFullYear(), (curM || 1) - 1, 1);
+    const last6Months: { key: string; label: string; hours: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(refDt.getFullYear(), refDt.getMonth() - i, 1);
+      const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      last6Months.push({
+        key: ym,
+        label: `${monthNames[d.getMonth()]} '${String(d.getFullYear()).slice(2)}`,
+        hours: 0,
+      });
+    }
+    empSchedules.forEach((s) => {
+      const st = (s.shiftType || '').toLowerCase();
+      if (st === 'off' || st === 'absence' || st === 'absent') return;
+      const ym = (s.workDate || '').slice(0, 7);
+      const bucket = last6Months.find((m) => m.key === ym);
+      if (bucket) {
+        bucket.hours += parseFloat(s.plannedHours || '0');
+      }
+    });
+    const maxMonthHours = Math.max(160, ...last6Months.map((m) => m.hours));
+
+    // Documents list & compliance score
+    const docItems = [
+      {
+        key: 'docMedicalReport',
+        label: 'Medical Report',
+        sub: 'Raporti Mjekësor',
+        ok: Boolean(emp.docMedicalReport),
+        icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+      },
+      {
+        key: 'docMedicalChart',
+        label: 'Medical Chart',
+        sub: 'Kartela Mjekësore',
+        ok: Boolean(emp.docMedicalChart),
+        icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M12 11v6"/><path d="M9 14h6"/></svg>`,
+      },
+      {
+        key: 'docWorkContract',
+        label: 'Work Contract',
+        sub: 'Kontrata e Punës',
+        ok: Boolean(emp.docWorkContract),
+        icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+      },
+      {
+        key: 'docWorkBook',
+        label: 'Work Chart (Librezë Pune)',
+        sub: 'Libreza Zyrtare e Punës',
+        ok: Boolean(emp.docWorkBook),
+        icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+      },
+      {
+        key: 'docDeclaration',
+        label: 'Declaration',
+        sub: 'Deklarata Personale',
+        ok: Boolean(emp.docDeclaration),
+        icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`,
+      },
+      {
+        key: 'docTraining',
+        label: 'Training Certificate',
+        sub: 'Certifikata e Trajnimit',
+        ok: Boolean(emp.docTraining),
+        icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
+      },
+    ];
+
+    const verifiedCount = docItems.filter((d) => d.ok).length;
+    const compliancePct = Math.round((verifiedCount / docItems.length) * 100);
+    const ringColor =
+      compliancePct === 100 ? '#10b981' : compliancePct >= 50 ? '#38bdf8' : '#f59e0b';
+
+    const primaryCompLabel =
+      baseSal > 0
+        ? this.formatMoney(baseSal)
+        : hourlySal > 0
+        ? `${this.formatMoney(hourlySal)}/h`
+        : '0.00 Lek';
+    const subCompLabel =
+      baseSal > 0 && hourlySal > 0
+        ? `Base + ${this.formatMoney(hourlySal)}/h`
+        : baseSal > 0
+        ? `Monthly Fixed • ${emp.weeklyTargetHours || 40}h/wk`
+        : `Hourly Rate • ${emp.overtimeRateMultiplier || '1.50'}x OT`;
+
+    const isAdmin = this.currentUser?.role === 'admin';
+    const editableAttr =
+      !editMode && isAdmin
+        ? `class="wc-id-item wc-editable-hint" title="Double-click to edit"`
+        : `class="wc-id-item"`;
+
+    bodyEl.innerHTML = `
+      <div class="wc-bento-layout">
+        <!-- LEFT SIDEBAR: Glass Profile & Complete Personal Identity -->
+        <aside class="wc-glass-panel wc-sidebar-panel">
+          <div class="wc-profile-center">
+            ${avatarHtml}
+            ${
+              editMode
+                ? `
+                  <div style="width:100%;display:flex;flex-direction:column;gap:0.4rem;margin-top:0.5rem">
+                    <div class="wc-edit-row-2">
+                      <input type="text" id="wc-in-code" class="wc-glass-input" value="${emp.employeeCode}" placeholder="Code" title="Employ Number" />
+                      <select id="wc-in-status" class="wc-glass-select" title="Status">
+                        <option value="Employed" ${emp.status === 'Employed' ? 'selected' : ''}>Employed</option>
+                        <option value="Provisory" ${emp.status === 'Provisory' ? 'selected' : ''}>Provisory</option>
+                        <option value="Active" ${emp.status === 'Active' ? 'selected' : ''}>Active</option>
+                        <option value="Terminated" ${emp.status === 'Terminated' ? 'selected' : ''}>Terminated</option>
+                      </select>
+                    </div>
+                    <div class="wc-edit-row-2">
+                      <input type="text" id="wc-in-first" class="wc-glass-input" value="${emp.firstName}" placeholder="First Name" />
+                      <input type="text" id="wc-in-last" class="wc-glass-input" value="${emp.lastName}" placeholder="Last Name" />
+                    </div>
+                    <div class="wc-edit-row-2">
+                      <input type="text" id="wc-in-pos" class="wc-glass-input" value="${emp.position || 'Staff'}" placeholder="Position" />
+                      <select id="wc-in-emptype" class="wc-glass-select" title="Employment Type">
+                        <option value="Full-Time" ${emp.employmentType === 'Full-Time' ? 'selected' : ''}>Full-Time</option>
+                        <option value="Part-Time" ${emp.employmentType === 'Part-Time' ? 'selected' : ''}>Part-Time</option>
+                        <option value="Contract" ${emp.employmentType === 'Contract' ? 'selected' : ''}>Contract</option>
+                      </select>
+                    </div>
+                  </div>
+                `
+                : `
+                  <span class="wc-emp-code-tag">ID ${emp.employeeCode}</span>
+                  <h2 class="wc-name">${emp.firstName} ${emp.lastName}</h2>
+                  <div class="wc-role-line">${emp.position || 'Staff'} &bull; ${emp.employmentType || 'Full-Time'}</div>
+                  <div class="wc-meta-pills">
+                    <span class="wc-meta-pill">⚧ ${emp.gender || 'Not set'}</span>
+                    <span class="wc-meta-pill">🎂 ${ageStr !== '—' ? ageStr : 'DOB not set'}</span>
+                    <span class="wc-meta-pill">⏱️ ${tenureStr}</span>
+                  </div>
+                `
+            }
+          </div>
+
+          <div class="wc-identity-stack">
+            <div class="wc-edit-row-2">
+              <div ${editableAttr}>
+                <span class="wc-label">Gender</span>
+                ${
+                  editMode
+                    ? `<select id="wc-in-gender" class="wc-glass-select">
+                         <option value="" ${!emp.gender ? 'selected' : ''}>— Select —</option>
+                         <option value="Male" ${emp.gender === 'Male' ? 'selected' : ''}>Male</option>
+                         <option value="Female" ${emp.gender === 'Female' ? 'selected' : ''}>Female</option>
+                         <option value="Other" ${emp.gender === 'Other' ? 'selected' : ''}>Other</option>
+                       </select>`
+                    : `<span class="wc-value">${emp.gender || 'Not set'}</span>`
+                }
+              </div>
+
+              <div ${editableAttr}>
+                <span class="wc-label">Date of Birth</span>
+                ${
+                  editMode
+                    ? `<input type="date" id="wc-in-dob" class="wc-glass-input" value="${dobIso}" />`
+                    : `<span class="wc-value">${dobIso || 'Not set'}</span>`
+                }
+              </div>
+            </div>
+
+            <div class="wc-edit-row-2">
+              <div ${editableAttr}>
+                <div class="wc-id-item-top">
+                  <span class="wc-label">National ID No.</span>
+                  ${
+                    !editMode && emp.idNumber
+                      ? `<button type="button" class="wc-copy-btn" data-wc-copy="${emp.idNumber}">Copy</button>`
+                      : ''
+                  }
+                </div>
+                ${
+                  editMode
+                    ? `<input type="text" id="wc-in-idnum" class="wc-glass-input" value="${emp.idNumber || ''}" placeholder="e.g. I81023055A" />`
+                    : `<span class="wc-value" style="font-family:monospace">${emp.idNumber || 'Not set'}</span>`
+                }
+              </div>
+
+              <div ${editableAttr}>
+                <span class="wc-label">Date of Hire</span>
+                ${
+                  editMode
+                    ? `<input type="date" id="wc-in-hire" class="wc-glass-input" value="${hireIso}" />`
+                    : `<span class="wc-value">${hireIso || '—'}</span>`
+                }
+              </div>
+            </div>
+
+            <div ${editableAttr}>
+              <div class="wc-id-item-top">
+                <span class="wc-label">Bank Account / IBAN</span>
+                ${
+                  !editMode && emp.bankAccount
+                    ? `<button type="button" class="wc-copy-btn" data-wc-copy="${emp.bankAccount}">Copy</button>`
+                    : ''
+                }
+              </div>
+              ${
+                editMode
+                  ? `<input type="text" id="wc-in-bank" class="wc-glass-input" value="${emp.bankAccount || ''}" placeholder="IBAN / Bank Account" />`
+                  : `<span class="wc-value" style="font-family:monospace;font-size:0.75rem">${emp.bankAccount || 'Not set'}</span>`
+              }
+            </div>
+
+            <div ${editableAttr}>
+              <span class="wc-label">Email Address</span>
+              ${
+                editMode
+                  ? `<input type="email" id="wc-in-email" class="wc-glass-input" value="${emp.email || ''}" placeholder="Email address" />`
+                  : `<span class="wc-value" style="font-size:0.74rem">${emp.email || 'Not set'}</span>`
+              }
+            </div>
+
+            <div ${editableAttr}>
+              <span class="wc-label">Phone Number</span>
+              ${
+                editMode
+                  ? `<input type="text" id="wc-in-phone" class="wc-glass-input" value="${emp.phone || ''}" placeholder="+355 69 ..." />`
+                  : `<span class="wc-value" style="font-size:0.76rem">${emp.phone || 'Not set'}</span>`
+              }
+            </div>
+          </div>
+        </aside>
+
+        <!-- RIGHT WORKSPACE: KPIs, Documents Grid & Activity Analytics -->
+        <div class="wc-main-workspace">
+          <!-- Row 1: 4 Glass KPI Cards -->
+          <div class="wc-kpi-grid">
+            <div class="wc-kpi-card">
+              <div class="wc-kpi-top">
+                <span>Compensation</span>
+                <span class="wc-kpi-icon" style="background:rgba(56,189,248,0.15);color:#38bdf8">💰</span>
+              </div>
+              <div class="wc-kpi-val" style="color:#38bdf8">${primaryCompLabel}</div>
+              <div class="wc-kpi-sub">${subCompLabel}</div>
+            </div>
+
+            <div class="wc-kpi-card">
+              <div class="wc-kpi-top">
+                <span>Logged Worktime</span>
+                <span class="wc-kpi-icon" style="background:rgba(16,185,129,0.15);color:#34d399">⏱️</span>
+              </div>
+              <div class="wc-kpi-val" style="color:#34d399">${workedHours.toFixed(1)} hrs</div>
+              <div class="wc-kpi-sub">${presentDays} shifts &bull;This mo: ${currentMonthHours.toFixed(1)}h (Avg ${avgHrsPerDay}h/d)</div>
+            </div>
+
+            <div class="wc-kpi-card">
+              <div class="wc-kpi-top">
+                <span>Leaves &amp; Absences</span>
+                <span class="wc-kpi-icon" style="background:rgba(245,158,11,0.15);color:#fbbf24">📋</span>
+              </div>
+              <div class="wc-kpi-val">${leaveDays + sickDays + absentDays + holidayDays} days</div>
+              <div class="wc-kpi-sub">${leaveDays} Leave &bull; ${sickDays} Sick &bull; ${absentDays} Absence</div>
+            </div>
+
+            <div class="wc-kpi-card">
+              <div class="wc-kpi-top">
+                <span>${totalNetPaid > 0 ? 'Cumulative Net Paid' : 'Est. Monthly Pay'}</span>
+                <span class="wc-kpi-icon" style="background:rgba(168,85,247,0.15);color:#c084fc">🏦</span>
+              </div>
+              <div class="wc-kpi-val">${
+                totalNetPaid > 0
+                  ? this.formatMoney(totalNetPaid)
+                  : estimatedCurrentMonthPay > 0
+                  ? this.formatMoney(estimatedCurrentMonthPay)
+                  : '0.00 Lek'
+              }</div>
+              <div class="wc-kpi-sub">${
+                latestPayroll
+                  ? `Last: ${latestPayroll.payPeriod} (${latestPayroll.paymentStatus})`
+                  : `Current month (${this.currentMonth}) est.`
+              }</div>
+            </div>
+          </div>
+
+          <!-- Row 2: Official Documents Verification Matrix -->
+          <div class="wc-glass-panel">
+            <div class="wc-section-header">
+              <h4 class="wc-section-title">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Official Documents Checklist (Verifikimi i Dokumenteve)
+              </h4>
+              <div class="wc-compliance-pill">
+                <span style="color:${ringColor}">${verifiedCount}/${docItems.length} Verified (${compliancePct}%)</span>
+                <div class="wc-mini-progress">
+                  <div class="wc-mini-progress-fill" style="width:${compliancePct}%;background:${ringColor}"></div>
+                </div>
+              </div>
+            </div>
+            <div class="wc-docs-grid">
+              ${docItems
+                .map(
+                  (d) => `
+                  <div class="wc-doc-card ${d.ok ? 'is-verified' : ''}" data-wc-doc-toggle="${d.key}" title="Click to toggle ${d.label}">
+                    <div class="wc-doc-left">
+                      <div class="wc-doc-icon-box">${d.icon}</div>
+                      <div class="wc-doc-titles">
+                        <span class="wc-doc-name">${d.label}</span>
+                        <span class="wc-doc-sub">${d.sub}</span>
+                      </div>
+                    </div>
+                    <span class="wc-doc-status-badge ${d.ok ? 'wc-doc-ok' : 'wc-doc-missing'}">
+                      ${d.ok ? '✓ Verified' : '✗ Missing'}
+                    </span>
+                  </div>
+                `
+                )
+                .join('')}
+            </div>
+          </div>
+
+          <!-- Row 3: 6-Month Workhours Chart & Financial Setup -->
+          <div class="wc-bottom-split">
+            <div class="wc-glass-panel" style="display:flex;flex-direction:column;justify-content:space-between">
+              <div class="wc-section-header" style="margin-bottom:0.5rem">
+                <h4 class="wc-section-title">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                  6-Month Workhours Activity
+                </h4>
+                <span style="font-size:0.68rem;color:var(--text-muted)">Target: ${(emp.weeklyTargetHours || 40) * 4}h/mo</span>
+              </div>
+
+              <div class="wc-bars-wrap">
+                ${last6Months
+                  .map((m) => {
+                    const pct = Math.min(100, Math.round((m.hours / maxMonthHours) * 100));
+                    return `
+                      <div class="wc-bar-col" title="${m.label}: ${m.hours.toFixed(1)} hrs">
+                        <span class="wc-bar-val">${m.hours > 0 ? `${Math.round(m.hours)}h` : '0h'}</span>
+                        <div class="wc-bar-track">
+                          <div class="wc-bar-fill" style="height:${Math.max(m.hours > 0 ? 12 : 4, pct)}%"></div>
+                        </div>
+                        <span class="wc-bar-lbl">${m.label}</span>
+                      </div>
+                    `;
+                  })
+                  .join('')}
+              </div>
+            </div>
+
+            <div class="wc-glass-panel" style="display:flex;flex-direction:column;justify-content:space-between">
+              <div>
+                <div class="wc-section-header" style="margin-bottom:0.6rem">
+                  <h4 class="wc-section-title">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    Contract &amp; Rate Terms
+                  </h4>
+                  ${
+                    editMode
+                      ? `<button type="button" class="btn btn-primary btn-xs" id="btn-wc-save-all">💾 Save Changes</button>`
+                      : ''
+                  }
+                </div>
+                <div class="wc-comp-grid">
+                  <div class="wc-comp-box ${!editMode && isAdmin ? 'wc-editable-hint' : ''}">
+                    <span class="wc-label">Base Salary (Lek)</span>
+                    ${
+                      editMode
+                        ? `<input type="number" step="0.01" id="wc-in-base" class="wc-glass-input" value="${baseSal}" />`
+                        : `<span class="wc-value" style="color:#34d399">${this.formatMoney(baseSal)}</span>`
+                    }
+                  </div>
+                  <div class="wc-comp-box ${!editMode && isAdmin ? 'wc-editable-hint' : ''}">
+                    <span class="wc-label">Hourly Rate (Lek/h)</span>
+                    ${
+                      editMode
+                        ? `<input type="number" step="0.01" id="wc-in-hourly" class="wc-glass-input" value="${hourlySal}" />`
+                        : `<span class="wc-value" style="color:#38bdf8">${this.formatMoney(hourlySal)}/h</span>`
+                    }
+                  </div>
+                  <div class="wc-comp-box ${!editMode && isAdmin ? 'wc-editable-hint' : ''}">
+                    <span class="wc-label">Weekly Target</span>
+                    ${
+                      editMode
+                        ? `<input type="number" id="wc-in-weekly" class="wc-glass-input" value="${emp.weeklyTargetHours || 40}" />`
+                        : `<span class="wc-value">${emp.weeklyTargetHours || 40} hrs/wk</span>`
+                    }
+                  </div>
+                  <div class="wc-comp-box ${!editMode && isAdmin ? 'wc-editable-hint' : ''}">
+                    <span class="wc-label">Overtime &amp; Tax</span>
+                    ${
+                      editMode
+                        ? `<input type="number" step="0.1" id="wc-in-ot" class="wc-glass-input" value="${emp.overtimeRateMultiplier || '1.50'}" />`
+                        : `<span class="wc-value">${emp.overtimeRateMultiplier || '1.50'}x &bull; ${emp.taxRatePercent || '15.00'}%</span>`
+                    }
+                  </div>
+                </div>
+                ${
+                  latestSalChange
+                    ? `<div style="margin-top:0.45rem;font-size:0.68rem;color:var(--text-muted)">
+                         Last rate change: <strong>${this.formatMoney(parseFloat(latestSalChange.previousSalary))} → ${this.formatMoney(parseFloat(latestSalChange.newSalary))}</strong> (${latestSalChange.effectiveDate} • ${latestSalChange.reason})
+                       </div>`
+                    : ''
+                }
+              </div>
+
+              <div class="wc-signatures">
+                <div class="wc-sig-box">
+                  <span class="wc-sig-title">Employee Signature</span>
+                  <div class="wc-sig-line"></div>
+                </div>
+                <div class="wc-sig-box">
+                  <span class="wc-sig-title">HR Director Stamp</span>
+                  <div class="wc-sig-line"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Double-click any editable field in View Mode to enter In-Chart Edit Mode
+    if (!editMode && isAdmin) {
+      bodyEl.querySelectorAll('.wc-editable-hint').forEach((el) => {
+        el.addEventListener('dblclick', () => {
+          this.openWorkerChart(emp.id, true);
+        });
+      });
+    }
+
+    // Photo change/clear handlers in In-Chart Edit Mode
+    if (editMode) {
+      const photoFileIn = document.getElementById('wc-photo-file-input') as HTMLInputElement | null;
+      const photoValIn = document.getElementById('wc-photo-data-val') as HTMLInputElement | null;
+
+      document.getElementById('btn-wc-change-photo')?.addEventListener('click', () => {
+        photoFileIn?.click();
+      });
+
+      photoFileIn?.addEventListener('change', () => {
+        const file = photoFileIn.files?.[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+          this.toast('Image size must be less than 5MB');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const dataUrl = ev.target?.result as string;
+          if (photoValIn) photoValIn.value = dataUrl;
+          const frame = bodyEl.querySelector('.wc-avatar-frame');
+          if (frame) {
+            frame.innerHTML = `<img src="${dataUrl}" class="wc-avatar" alt="Preview" /><span class="badge badge-${statusBadgeClass} wc-status-dot-badge">${emp.status}</span>`;
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById('btn-wc-clear-photo')?.addEventListener('click', () => {
+        if (photoValIn) photoValIn.value = '';
+        const frame = bodyEl.querySelector('.wc-avatar-frame');
+        if (frame) {
+          frame.innerHTML = `<div class="wc-avatar-placeholder"><span>${initials || '?'}</span></div><span class="badge badge-${statusBadgeClass} wc-status-dot-badge">${emp.status}</span>`;
+        }
+      });
+
+      document.getElementById('btn-wc-save-all')?.addEventListener('click', async () => {
+        const payload = {
+          employeeCode: (document.getElementById('wc-in-code') as HTMLInputElement)?.value.trim() || emp.employeeCode,
+          firstName: (document.getElementById('wc-in-first') as HTMLInputElement)?.value.trim() || emp.firstName,
+          lastName: (document.getElementById('wc-in-last') as HTMLInputElement)?.value.trim() || emp.lastName,
+          position: (document.getElementById('wc-in-pos') as HTMLInputElement)?.value.trim() || 'Staff',
+          employmentType: (document.getElementById('wc-in-emptype') as HTMLSelectElement)?.value || emp.employmentType || 'Full-Time',
+          status: (document.getElementById('wc-in-status') as HTMLSelectElement)?.value || emp.status,
+          gender: (document.getElementById('wc-in-gender') as HTMLSelectElement)?.value || null,
+          idNumber: (document.getElementById('wc-in-idnum') as HTMLInputElement)?.value.trim() || null,
+          dateOfBirth: (document.getElementById('wc-in-dob') as HTMLInputElement)?.value || null,
+          bankAccount: (document.getElementById('wc-in-bank') as HTMLInputElement)?.value.trim() || null,
+          hireDate: (document.getElementById('wc-in-hire') as HTMLInputElement)?.value || emp.hireDate,
+          email: (document.getElementById('wc-in-email') as HTMLInputElement)?.value.trim() || emp.email,
+          phone: (document.getElementById('wc-in-phone') as HTMLInputElement)?.value.trim() || null,
+          idPhoto: photoValIn ? photoValIn.value || null : emp.idPhoto,
+          baseSalary: Number((document.getElementById('wc-in-base') as HTMLInputElement)?.value || 0).toFixed(2),
+          hourlyRate: Number((document.getElementById('wc-in-hourly') as HTMLInputElement)?.value || 0).toFixed(2),
+          weeklyTargetHours: Number((document.getElementById('wc-in-weekly') as HTMLInputElement)?.value || 40),
+          overtimeRateMultiplier: Number((document.getElementById('wc-in-ot') as HTMLInputElement)?.value || 1.5).toFixed(2),
+          docMedicalReport: Boolean(emp.docMedicalReport),
+          docMedicalChart: Boolean(emp.docMedicalChart),
+          docWorkContract: Boolean(emp.docWorkContract),
+          docWorkBook: Boolean(emp.docWorkBook),
+          docDeclaration: Boolean(emp.docDeclaration),
+          docTraining: Boolean(emp.docTraining),
+        };
+
+        try {
+          await this.api(`/api/employees/${emp.id}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+          });
+          this.toast('Worker Chart updated');
+          await this.loadAllData();
+          this.openWorkerChart(emp.id, false);
+        } catch (err: any) {
+          this.toast(err.message || 'Failed to update Worker Chart');
+        }
+      });
+    }
+
+    // Bind interactive document toggle directly inside the Worker Chart
+    bodyEl.querySelectorAll('[data-wc-doc-toggle]').forEach((card) => {
+      card.addEventListener('click', async () => {
+        if (this.currentUser?.role === 'viewer') return;
+        const docKey = card.getAttribute('data-wc-doc-toggle') || '';
+        if (!docKey) return;
+        const nextVal = !Boolean((emp as any)[docKey]);
+        await this.toggleEmployeeDoc(emp.id, docKey, nextVal);
+        this.openWorkerChart(emp.id, this.isWorkerChartEditing);
+      });
+    });
+
+    // Bind copy buttons for ID Number / Bank IBAN
+    bodyEl.querySelectorAll('[data-wc-copy]').forEach((btn) => {
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const text = btn.getAttribute('data-wc-copy') || '';
+        if (text && navigator.clipboard) {
+          navigator.clipboard.writeText(text);
+          this.toast(`Copied: ${text}`);
+        }
+      });
+    });
+  }
+
+  private printWorkerChart(empId: number | null): void {
+    if (!empId) return;
+    const emp = this.employees.find((x) => x.id === empId);
+    if (!emp) return;
+
+    const win = window.open('', '_blank');
+    if (!win) {
+      this.toast('Please allow pop-ups to print the Worker Chart');
+      return;
+    }
+
+    const baseSal = parseFloat(emp.baseSalary || '0');
+    const hourlySal = parseFloat(emp.hourlyRate || '0');
+    const dobFormatted = emp.dateOfBirth ? emp.dateOfBirth.split('T')[0] : '—';
+
+    let ageStr = '—';
+    if (emp.dateOfBirth) {
+      const birth = new Date(emp.dateOfBirth);
+      const diff = Date.now() - birth.getTime();
+      const calculatedAge = Math.abs(new Date(diff).getUTCFullYear() - 1970);
+      if (!isNaN(calculatedAge)) ageStr = `${calculatedAge} years`;
+    }
+
+    let tenureStr = 'New Hire';
+    if (emp.hireDate) {
+      const hire = new Date(emp.hireDate);
+      const now = new Date();
+      const totalMonths =
+        (now.getFullYear() - hire.getFullYear()) * 12 + (now.getMonth() - hire.getMonth());
+      if (totalMonths >= 12) {
+        const yrs = Math.floor(totalMonths / 12);
+        const mos = totalMonths % 12;
+        tenureStr = mos > 0 ? `${yrs} yrs, ${mos} mos` : `${yrs} yrs`;
+      } else if (totalMonths > 0) {
+        tenureStr = `${totalMonths} mos`;
+      }
+    }
+
+    const empSchedules = this.getEmployeeAllSchedules(emp.id);
+    let workedHours = 0;
+    let presentDays = 0;
+    let leaveDays = 0;
+    let sickDays = 0;
+    let absentDays = 0;
+
+    empSchedules.forEach((s) => {
+      const hrs = parseFloat(s.plannedHours || '0');
+      const st = (s.shiftType || '').toLowerCase();
+      if (st === 'leave' || st === 'vacation') {
+        leaveDays++;
+        workedHours += hrs;
+      } else if (st === 'sick' || st === 'raport') {
+        sickDays++;
+        workedHours += hrs;
+      } else if (st === 'holiday') {
+        workedHours += hrs;
+      } else if (st === 'absence' || st === 'absent') {
+        absentDays++;
+      } else if (st !== 'off' && hrs > 0) {
+        presentDays++;
+        workedHours += hrs;
+      }
+    });
+
+    const avgHrsPerDay = presentDays > 0 ? (workedHours / presentDays).toFixed(1) : '0.0';
+    const empPayrolls = this.payrolls.filter((p) => p.employeeId === emp.id);
+    const totalNetPaid = empPayrolls.reduce((sum, p) => sum + parseFloat(p.netSalary || '0'), 0);
+    const latestPayroll = empPayrolls[0];
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const [curY, curM] = (this.currentMonth || this.formatDateISO(new Date()).slice(0, 7))
+      .split('-')
+      .map(Number);
+    const refDt = new Date(curY || new Date().getFullYear(), (curM || 1) - 1, 1);
+    const last6Months: { key: string; label: string; hours: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(refDt.getFullYear(), refDt.getMonth() - i, 1);
+      const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      last6Months.push({
+        key: ym,
+        label: `${monthNames[d.getMonth()]} ${d.getFullYear()}`,
+        hours: 0,
+      });
+    }
+    empSchedules.forEach((s) => {
+      const st = (s.shiftType || '').toLowerCase();
+      if (st === 'off' || st === 'absence' || st === 'absent') return;
+      const ym = (s.workDate || '').slice(0, 7);
+      const bucket = last6Months.find((m) => m.key === ym);
+      if (bucket) bucket.hours += parseFloat(s.plannedHours || '0');
+    });
+
+    const docs = [
+      { label: 'Medical Report (Raporti Mjekësor)', ok: Boolean(emp.docMedicalReport) },
+      { label: 'Medical Chart (Kartela Mjekësore)', ok: Boolean(emp.docMedicalChart) },
+      { label: 'Work Contract (Kontrata e Punës)', ok: Boolean(emp.docWorkContract) },
+      { label: 'Work Chart / Librezë Pune', ok: Boolean(emp.docWorkBook) },
+      { label: 'Declaration (Deklarata)', ok: Boolean(emp.docDeclaration) },
+      { label: 'Training Certificate (Trajnimi)', ok: Boolean(emp.docTraining) },
+    ];
+    const verifiedCount = docs.filter((d) => d.ok).length;
+
+    const photoHtml = emp.idPhoto
+      ? `<img src="${emp.idPhoto}" class="emp-photo" alt="${emp.firstName}" />`
+      : `<div class="emp-photo-box">No Photo</div>`;
+
+    win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Worker Chart - ${emp.firstName} ${emp.lastName} (${emp.employeeCode})</title>
+  <style>
+    @page { size: A4 portrait; margin: 14mm; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #111827;
+      font-size: 11px;
+      line-height: 1.4;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+    .header-left h1 {
+      font-size: 18px;
+      margin: 0 0 4px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .header-left p {
+      margin: 2px 0;
+      font-size: 11px;
+      color: #374151;
+    }
+    .emp-photo {
+      width: 76px;
+      height: 76px;
+      object-fit: cover;
+      border: 1px solid #111827;
+      border-radius: 4px;
+    }
+    .emp-photo-box {
+      width: 76px;
+      height: 76px;
+      border: 1px solid #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #6b7280;
+      background: #f9fafb;
+    }
+    h2 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      padding: 5px 8px;
+      margin: 12px 0 6px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 6px;
+    }
+    th, td {
+      border: 1px solid #d1d5db;
+      padding: 5px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      background: #f9fafb;
+      font-weight: 700;
+      width: 22%;
+      color: #374151;
+    }
+    td {
+      width: 28%;
+    }
+    .center-table th, .center-table td {
+      width: auto;
+      text-align: center;
+    }
+    .ok { font-weight: bold; color: #065f46; }
+    .missing { color: #991b1b; }
+    .signatures {
+      margin-top: 32px;
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+    }
+    .sig-col {
+      flex: 1;
+      text-align: center;
+    }
+    .sig-line {
+      border-bottom: 1px solid #111827;
+      height: 36px;
+      margin-bottom: 6px;
+    }
+    .footer {
+      margin-top: 22px;
+      border-top: 1px solid #d1d5db;
+      padding-top: 6px;
+      font-size: 9px;
+      color: #6b7280;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>Worker Chart / Kartela e Punëtorit</h1>
+      <p><strong>Employee:</strong> ${emp.firstName} ${emp.lastName} &nbsp;|&nbsp; <strong>Code:</strong> ${emp.employeeCode} &nbsp;|&nbsp; <strong>Status:</strong> ${emp.status}</p>
+      <p><strong>Position:</strong> ${emp.position || 'Staff'} (${emp.employmentType || 'Full-Time'}) &nbsp;|&nbsp; <strong>Date Generated:</strong> ${new Date().toLocaleDateString()}</p>
+    </div>
+    <div>${photoHtml}</div>
+  </div>
+
+  <h2>1. Personal &amp; Contact Information</h2>
+  <table>
+    <tbody>
+      <tr>
+        <th>First Name</th>
+        <td><strong>${emp.firstName}</strong></td>
+        <th>Last Name</th>
+        <td><strong>${emp.lastName}</strong></td>
+      </tr>
+      <tr>
+        <th>Gender</th>
+        <td>${emp.gender || '—'}</td>
+        <th>Date of Birth / Age</th>
+        <td>${dobFormatted} (${ageStr})</td>
+      </tr>
+      <tr>
+        <th>National ID / Passport</th>
+        <td style="font-family:monospace"><strong>${emp.idNumber || '—'}</strong></td>
+        <th>Phone Number</th>
+        <td>${emp.phone || '—'}</td>
+      </tr>
+      <tr>
+        <th>Email Address</th>
+        <td colspan="3">${emp.email || '—'}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. Employment &amp; Compensation Details</h2>
+  <table>
+    <tbody>
+      <tr>
+        <th>Employee Code</th>
+        <td><strong>${emp.employeeCode}</strong></td>
+        <th>Employment Status</th>
+        <td><strong>${emp.status}</strong></td>
+      </tr>
+      <tr>
+        <th>Position / Role</th>
+        <td>${emp.position || 'Staff'}</td>
+        <th>Employment Type</th>
+        <td>${emp.employmentType || 'Full-Time'}</td>
+      </tr>
+      <tr>
+        <th>Date of Hire</th>
+        <td>${emp.hireDate}</td>
+        <th>Total Tenure</th>
+        <td>${tenureStr}</td>
+      </tr>
+      <tr>
+        <th>Base Monthly Salary</th>
+        <td><strong>${baseSal > 0 ? this.formatMoney(baseSal) : '—'}</strong></td>
+        <th>Hourly Pay Rate</th>
+        <td><strong>${hourlySal > 0 ? `${this.formatMoney(hourlySal)} / hr` : '—'}</strong></td>
+      </tr>
+      <tr>
+        <th>Weekly Target Hours</th>
+        <td>${emp.weeklyTargetHours || 40} hrs / week</td>
+        <th>Overtime Multiplier</th>
+        <td>${emp.overtimeRateMultiplier || '1.50'}x (Tax: ${emp.taxRatePercent || '15.00'}%)</td>
+      </tr>
+      <tr>
+        <th>Bank Account (IBAN)</th>
+        <td colspan="3" style="font-family:monospace">${emp.bankAccount || '—'}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Official Documents Verification (${verifiedCount} / ${docs.length} Completed)</h2>
+  <table>
+    <tbody>
+      <tr>
+        <th>${docs[0].label}</th>
+        <td class="${docs[0].ok ? 'ok' : 'missing'}">${docs[0].ok ? '✓ YES (Verified)' : '✗ NO (Missing)'}</td>
+        <th>${docs[1].label}</th>
+        <td class="${docs[1].ok ? 'ok' : 'missing'}">${docs[1].ok ? '✓ YES (Verified)' : '✗ NO (Missing)'}</td>
+      </tr>
+      <tr>
+        <th>${docs[2].label}</th>
+        <td class="${docs[2].ok ? 'ok' : 'missing'}">${docs[2].ok ? '✓ YES (Verified)' : '✗ NO (Missing)'}</td>
+        <th>${docs[3].label}</th>
+        <td class="${docs[3].ok ? 'ok' : 'missing'}">${docs[3].ok ? '✓ YES (Verified)' : '✗ NO (Missing)'}</td>
+      </tr>
+      <tr>
+        <th>${docs[4].label}</th>
+        <td class="${docs[4].ok ? 'ok' : 'missing'}">${docs[4].ok ? '✓ YES (Verified)' : '✗ NO (Missing)'}</td>
+        <th>${docs[5].label}</th>
+        <td class="${docs[5].ok ? 'ok' : 'missing'}">${docs[5].ok ? '✓ YES (Verified)' : '✗ NO (Missing)'}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Workhours, Attendance &amp; Payroll Summary</h2>
+  <table>
+    <tbody>
+      <tr>
+        <th>Total Worked Hours</th>
+        <td><strong>${workedHours.toFixed(1)} hrs</strong> (${presentDays} shifts)</td>
+        <th>Average Daily Hours</th>
+        <td>${avgHrsPerDay} hrs / day</td>
+      </tr>
+      <tr>
+        <th>Leave / Vacation Days</th>
+        <td>${leaveDays} days</td>
+        <th>Sick / Medical Days</th>
+        <td>${sickDays} days</td>
+      </tr>
+      <tr>
+        <th>Unexcused Absences</th>
+        <td>${absentDays} days</td>
+        <th>Payroll Runs Processed</th>
+        <td>${empPayrolls.length} runs ${latestPayroll ? `(Last: ${latestPayroll.payPeriod} - ${latestPayroll.paymentStatus})` : ''}</td>
+      </tr>
+      <tr>
+        <th>Cumulative Net Paid</th>
+        <td colspan="3"><strong>${totalNetPaid > 0 ? this.formatMoney(totalNetPaid) : '0.00 Lek'}</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5. Last 6 Months Workhours History</h2>
+  <table class="center-table">
+    <thead>
+      <tr>
+        ${last6Months.map((m) => `<th>${m.label}</th>`).join('')}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        ${last6Months.map((m) => `<td><strong>${m.hours.toFixed(1)} hrs</strong></td>`).join('')}
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="signatures">
+    <div class="sig-col">
+      <div class="sig-line"></div>
+      <strong>Employee Signature</strong><br/>
+      <span>(${emp.firstName} ${emp.lastName})</span>
+    </div>
+    <div class="sig-col">
+      <div class="sig-line"></div>
+      <strong>HR Administrator / Authorized Stamp</strong><br/>
+      <span>Date: ____ / ____ / ________</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Official Employee Dossier — ${emp.employeeCode} (${emp.firstName} ${emp.lastName})</span>
+    <span>Page 1 of 1</span>
+  </div>
+  <script>window.onload = function() { window.print(); };</script>
+</body>
+</html>`);
+    win.document.close();
   }
 
   private startInlineBaseSalaryEdit(td: HTMLElement, empId: number): void {
@@ -3587,8 +4981,21 @@ class PulseHRApp {
         employeeCode: (document.getElementById('emp-code') as HTMLInputElement).value,
         firstName: (document.getElementById('emp-first-name') as HTMLInputElement).value,
         lastName: (document.getElementById('emp-last-name') as HTMLInputElement).value,
+        email: (document.getElementById('emp-email') as HTMLInputElement | null)?.value.trim() || '',
+        phone: (document.getElementById('emp-phone') as HTMLInputElement | null)?.value.trim() || null,
+        position: (document.getElementById('emp-position') as HTMLInputElement | null)?.value.trim() || 'Staff',
         bankAccount: (document.getElementById('emp-bank') as HTMLInputElement).value,
         status: (document.getElementById('emp-status') as HTMLSelectElement).value,
+        gender: (document.getElementById('emp-gender') as HTMLSelectElement | null)?.value || null,
+        dateOfBirth: (document.getElementById('emp-dob') as HTMLInputElement | null)?.value || null,
+        idNumber: (document.getElementById('emp-id-number') as HTMLInputElement | null)?.value || null,
+        idPhoto: (document.getElementById('emp-photo-val') as HTMLInputElement | null)?.value || null,
+        docMedicalReport: Boolean((document.getElementById('emp-doc-med-report') as HTMLInputElement | null)?.checked),
+        docMedicalChart: Boolean((document.getElementById('emp-doc-med-chart') as HTMLInputElement | null)?.checked),
+        docWorkContract: Boolean((document.getElementById('emp-doc-contract') as HTMLInputElement | null)?.checked),
+        docWorkBook: Boolean((document.getElementById('emp-doc-workbook') as HTMLInputElement | null)?.checked),
+        docDeclaration: Boolean((document.getElementById('emp-doc-declaration') as HTMLInputElement | null)?.checked),
+        docTraining: Boolean((document.getElementById('emp-doc-training') as HTMLInputElement | null)?.checked),
         baseSalary: payType === 'base' ? payAmt.toFixed(2) : '0.00',
         hourlyRate: payType === 'hourly' ? payAmt.toFixed(2) : '0.00',
         salaryChangeReason:
@@ -4219,9 +5626,30 @@ class PulseHRApp {
 
     // Employee & Salary History filters
     document.getElementById('emp-search')?.addEventListener('input', () => this.renderEmployees());
-    document.getElementById('emp-status-filter')?.addEventListener('change', () =>
-      this.renderEmployees()
-    );
+    [
+      'emp-status-filter',
+      'emp-gender-filter',
+      'emp-paytype-filter',
+      'emp-profile-filter',
+      'emp-doc-filter',
+    ].forEach((filterId) => {
+      document.getElementById(filterId)?.addEventListener('change', () => this.renderEmployees());
+    });
+    document.getElementById('btn-reset-emp-filters')?.addEventListener('click', () => {
+      const searchIn = document.getElementById('emp-search') as HTMLInputElement | null;
+      if (searchIn) searchIn.value = '';
+      [
+        'emp-status-filter',
+        'emp-gender-filter',
+        'emp-paytype-filter',
+        'emp-profile-filter',
+        'emp-doc-filter',
+      ].forEach((filterId) => {
+        const sel = document.getElementById(filterId) as HTMLSelectElement | null;
+        if (sel) sel.value = '';
+      });
+      this.renderEmployees();
+    });
     document.getElementById('salary-history-search')?.addEventListener('input', () =>
       this.renderSalaryHistory()
     );
@@ -4297,6 +5725,9 @@ class PulseHRApp {
         'employeeCode',
         'firstName',
         'lastName',
+        'gender',
+        'dateOfBirth',
+        'idNumber',
         'bankAccount',
         'status',
         'baseSalary',
@@ -4304,8 +5735,8 @@ class PulseHRApp {
       ];
       const today = this.formatDateISO(new Date());
       const sampleRows = [
-        [today, 'EMP-2001', 'Mario', 'Rossi', 'AL47212110090000000235698741', 'Employed', '65000.00', '500.00'],
-        [today, 'EMP-2002', 'Laura', 'Bianchi', 'AL35202111090000000001234567', 'Provisory', '45000.00', '350.00'],
+        [today, 'EMP-2001', 'Mario', 'Rossi', 'Male', '1990-05-14', 'I90514123A', 'AL47212110090000000235698741', 'Employed', '65000.00', '500.00'],
+        [today, 'EMP-2002', 'Laura', 'Bianchi', 'Female', '1995-10-22', 'I951022456B', 'AL35202111090000000001234567', 'Provisory', '45000.00', '350.00'],
       ];
       const csv = [headers.join(','), ...sampleRows.map((r) => r.join(','))].join('\n');
       this.downloadTextFile('employees-sample.csv', csv, 'text/csv');
@@ -4318,6 +5749,9 @@ class PulseHRApp {
         'employeeCode',
         'firstName',
         'lastName',
+        'gender',
+        'dateOfBirth',
+        'idNumber',
         'bankAccount',
         'status',
         'baseSalary',
@@ -4328,6 +5762,9 @@ class PulseHRApp {
         e.employeeCode,
         e.firstName,
         e.lastName,
+        e.gender || '',
+        e.dateOfBirth ? e.dateOfBirth.split('T')[0] : '',
+        e.idNumber || '',
         e.bankAccount || '',
         e.status,
         e.baseSalary,

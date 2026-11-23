@@ -41,6 +41,16 @@ export const employees = pgTable('employees', {
   weeklyTargetHours: integer('weekly_target_hours').default(40).notNull(),
   bankAccount: varchar('bank_account', { length: 80 }),
   taxRatePercent: numeric('tax_rate_percent', { precision: 5, scale: 2 }).default('15.00').notNull(),
+  gender: varchar('gender', { length: 20 }), // Male, Female, Other
+  dateOfBirth: date('date_of_birth'),
+  idNumber: varchar('id_number', { length: 50 }),
+  idPhoto: text('id_photo'),
+  docMedicalReport: boolean('doc_medical_report').default(false).notNull(),
+  docMedicalChart: boolean('doc_medical_chart').default(false).notNull(),
+  docWorkContract: boolean('doc_work_contract').default(false).notNull(),
+  docWorkBook: boolean('doc_work_book').default(false).notNull(), // Work chart (libreze pune)
+  docDeclaration: boolean('doc_declaration').default(false).notNull(),
+  docTraining: boolean('doc_training').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
