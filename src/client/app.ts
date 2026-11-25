@@ -3417,8 +3417,8 @@ class PulseHRApp {
     this.openModal('modal-payslip');
   }
 
-  // --- Employees Directory Rendering ---
-  private renderEmployees(): void {
+  // --- Employees Directory Filtering & Rendering ---
+  private getFilteredEmployees(): Employee[] {
     const searchVal = (
       (document.getElementById('emp-search') as HTMLInputElement | null)?.value || ''
     ).toLowerCase();
@@ -3438,7 +3438,7 @@ class PulseHRApp {
       document.getElementById('emp-doc-filter') as HTMLSelectElement | null
     )?.value;
 
-    const list = this.employees.filter((e) => {
+    return this.employees.filter((e) => {
       if (statusVal && e.status !== statusVal) return false;
 
       if (genderVal) {
@@ -3495,6 +3495,28 @@ class PulseHRApp {
       }
       return true;
     });
+  }
+
+  private getActiveEmployeeFilterSummary(): string {
+    const parts: string[] = [];
+    const searchVal = (document.getElementById('emp-search') as HTMLInputElement | null)?.value?.trim();
+    const statusSel = document.getElementById('emp-status-filter') as HTMLSelectElement | null;
+    const genderSel = document.getElementById('emp-gender-filter') as HTMLSelectElement | null;
+    const paySel = document.getElementById('emp-paytype-filter') as HTMLSelectElement | null;
+    const profSel = document.getElementById('emp-profile-filter') as HTMLSelectElement | null;
+    const docSel = document.getElementById('emp-doc-filter') as HTMLSelectElement | null;
+
+    if (searchVal) parts.push(`Search: "${searchVal}"`);
+    if (statusSel?.value) parts.push(`Status: ${statusSel.options[statusSel.selectedIndex].text}`);
+    if (genderSel?.value) parts.push(`Gender: ${genderSel.options[genderSel.selectedIndex].text}`);
+    if (paySel?.value) parts.push(`Pay: ${paySel.options[paySel.selectedIndex].text}`);
+    if (profSel?.value) parts.push(profSel.options[profSel.selectedIndex].text);
+    if (docSel?.value) parts.push(`Docs: ${docSel.options[docSel.selectedIndex].text}`);
+    return parts.length > 0 ? parts.join(' | ') : 'All Employees (No active filters)';
+  }
+
+  private renderEmployees(): void {
+    const list = this.getFilteredEmployees();
 
     const countEl = document.getElementById('emp-filter-count');
     if (countEl) {
@@ -5742,8 +5764,13 @@ class PulseHRApp {
       this.downloadTextFile('employees-sample.csv', csv, 'text/csv');
     });
 
-    // Export Current Employees CSV
+    // Export Filtered Employees CSV
     document.getElementById('btn-export-emp-csv')?.addEventListener('click', () => {
+      const filteredList = this.getFilteredEmployees();
+      if (filteredList.length === 0) {
+        this.toast('No employees match the current filter to export');
+        return;
+      }
       const headers = [
         'hireDate',
         'employeeCode',
@@ -5756,22 +5783,159 @@ class PulseHRApp {
         'status',
         'baseSalary',
         'hourlyRate',
+        'medicalReport',
+        'medicalChart',
+        'workContract',
+        'workChart',
+        'declaration',
+        'training',
       ];
-      const rows = this.employees.map((e) => [
-        e.hireDate,
-        e.employeeCode,
-        e.firstName,
-        e.lastName,
-        e.gender || '',
-        e.dateOfBirth ? e.dateOfBirth.split('T')[0] : '',
-        e.idNumber || '',
-        e.bankAccount || '',
-        e.status,
-        e.baseSalary,
-        e.hourlyRate,
-      ]);
+      const escapeCsv = (val: string) => {
+        const s = String(val ?? '');
+        return s.includes(',') || s.includes('"') || s.includes('\n')
+          ? `"${s.replace(/"/g, '""')}"`
+          : s;
+      };
+      const rows = filteredList.map((e) =>
+        [
+          e.hireDate,
+          e.employeeCode,
+          e.firstName,
+          e.lastName,
+          e.gender || '',
+          e.dateOfBirth ? e.dateOfBirth.split('T')[0] : '',
+          e.idNumber || '',
+          e.bankAccount || '',
+          e.status,
+          e.baseSalary,
+          e.hourlyRate,
+          e.docMedicalReport ? 'Yes' : 'No',
+          e.docMedicalChart ? 'Yes' : 'No',
+          e.docWorkContract ? 'Yes' : 'No',
+          e.docWorkBook ? 'Yes' : 'No',
+          e.docDeclaration ? 'Yes' : 'No',
+          e.docTraining ? 'Yes' : 'No',
+        ].map(escapeCsv)
+      );
       const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-      this.downloadTextFile(`employees-${this.formatDateISO(new Date())}.csv`, csv, 'text/csv');
+      this.downloadTextFile(
+        `employees-filtered-${this.formatDateISO(new Date())}.csv`,
+        '\uFEFF' + csv,
+        'text/csv;charset=utf-8;'
+      );
+      this.toast(`Exported ${filteredList.length} filtered employee(s) to CSV`);
+    });
+
+    // Export Filtered Employees PDF
+    document.getElementById('btn-export-emp-pdf')?.addEventListener('click', () => {
+      const filteredList = this.getFilteredEmployees();
+      if (filteredList.length === 0) {
+        this.toast('No employees match the current filter to export');
+        return;
+      }
+      const win = window.open('', '_blank');
+      if (!win) {
+        this.toast('Please allow pop-ups to export PDF');
+        return;
+      }
+
+      const filterSummary = this.getActiveEmployeeFilterSummary();
+      const customHeader = this.settings.exportHeader || 'PulseHR Workforce Management';
+      const customFooter = this.settings.exportFooter || 'Confidential • Generated by PulseHR';
+      const headerHtml = this.formatParagraphToHtml(customHeader);
+      const footerHtml = this.formatParagraphToHtml(customFooter);
+
+      const rowsHtml = filteredList
+        .map((e, idx) => {
+          const baseNum = parseFloat(e.baseSalary || '0');
+          const hourlyNum = parseFloat(e.hourlyRate || '0');
+          const dob = e.dateOfBirth ? e.dateOfBirth.split('T')[0] : '—';
+          const chk = (v?: boolean) =>
+            v ? '<span class="ok">✓</span>' : '<span class="no">✗</span>';
+          return `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${e.hireDate}</td>
+              <td><strong>${e.employeeCode}</strong></td>
+              <td><strong>${e.firstName} ${e.lastName}</strong></td>
+              <td>${e.gender || '—'}</td>
+              <td>${dob}</td>
+              <td style="font-family:monospace">${e.idNumber || '—'}</td>
+              <td style="font-family:monospace">${e.bankAccount || '—'}</td>
+              <td>${e.status}</td>
+              <td style="text-align:right">${baseNum > 0 ? this.formatMoney(baseNum) : '—'}</td>
+              <td style="text-align:right">${hourlyNum > 0 ? `${this.formatMoney(hourlyNum)}/h` : '—'}</td>
+              <td>${chk(e.docMedicalReport)}</td>
+              <td>${chk(e.docMedicalChart)}</td>
+              <td>${chk(e.docWorkContract)}</td>
+              <td>${chk(e.docWorkBook)}</td>
+              <td>${chk(e.docDeclaration)}</td>
+              <td>${chk(e.docTraining)}</td>
+            </tr>
+          `;
+        })
+        .join('');
+
+      win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Employees Report (${filteredList.length} staff)</title>
+  <style>
+    @page { size: A4 landscape; margin: 10mm; }
+    body { font-family: Arial, Helvetica, sans-serif; color: #111827; font-size: 10px; margin: 0; }
+    .hdr { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #111827; padding-bottom: 6px; margin-bottom: 10px; }
+    .filter-bar { background: #f3f4f6; border: 1px solid #d1d5db; padding: 5px 8px; margin-bottom: 10px; font-size: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #cbd5e1; padding: 4px 5px; text-align: center; vertical-align: middle; }
+    th { background: #f1f5f9; font-weight: 700; font-size: 9px; text-transform: uppercase; }
+    td:nth-child(4) { text-align: left; }
+    .ok { color: #065f46; font-weight: bold; }
+    .no { color: #991b1b; }
+    .ftr { margin-top: 12px; border-top: 1px solid #cbd5e1; padding-top: 6px; display: flex; justify-content: space-between; font-size: 9px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="hdr">
+    <div>
+      <div style="font-size:14px;font-weight:bold;margin-bottom:3px">${headerHtml}</div>
+      <span style="font-weight:600;color:#0f172a">Employees Directory &amp; Document Compliance Report</span>
+    </div>
+    <span>Showing: <strong>${filteredList.length}</strong> of ${this.employees.length} employees | Date: ${new Date().toLocaleDateString()}</span>
+  </div>
+  <div class="filter-bar"><strong>Active Filters:</strong> ${filterSummary}</div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Hire Date</th>
+        <th>Code</th>
+        <th>Full Name</th>
+        <th>Gender</th>
+        <th>DOB</th>
+        <th>ID No.</th>
+        <th>Bank IBAN</th>
+        <th>Status</th>
+        <th>Base Salary</th>
+        <th>Rate/Hr</th>
+        <th>Med. Rep</th>
+        <th>Med. Chart</th>
+        <th>Contract</th>
+        <th>Librezë</th>
+        <th>Decl.</th>
+        <th>Training</th>
+      </tr>
+    </thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+  <div class="ftr">
+    <div>${footerHtml}</div>
+    <div>Page 1 of 1</div>
+  </div>
+  <script>window.onload = function() { window.print(); };</script>
+</body>
+</html>`);
+      win.document.close();
     });
 
     // Import Employees CSV
